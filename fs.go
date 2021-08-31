@@ -8,25 +8,26 @@ import (
 
 type File struct {
 	Path string
-	Content io.ByteReader
-	FromUri url.URL
-	FromTemplate string
-	Vars interface{}
-	Compressed bool
-	Owner string
+	FromUri *url.URL
+	FromTemplate *string
+	Vars *interface{}
+	FromContent *io.ByteReader
+	Compressed *bool
+	User string
 	Group string
 	Permissions fs.FileMode
 }
 
 type Directory struct {
-	Path string
-	Owner string
+	Path  string
+	User  string
 	Group string
 	Permissions fs.FileMode
 }
 
 type FsDriverConfig struct {
 	Driver string
+	DryRun bool
 }
 
 type FsDriver interface {
