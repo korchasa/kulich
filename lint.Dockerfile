@@ -1,4 +1,4 @@
-FROM golang:1.13.7-alpine3.11 as build
+FROM golang:1.17.1-alpine3.14 as build
 ARG APP_VERSION
 ENV \
     TERM=xterm-color \
@@ -24,6 +24,7 @@ RUN cp ./golangci-lint-${GOLANGCI_VERSION}-linux-amd64/golangci-lint /usr/bin/
 RUN golangci-lint --version
 
 ADD . .
+RUN go mod vendor
 RUN golangci-lint run -v --timeout 3m
 
 #######################

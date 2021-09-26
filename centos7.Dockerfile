@@ -15,3 +15,6 @@ RUN yum update -y \
     && yum -y install gcc
 
 WORKDIR /work
+
+ADD . .
+CMD go test ./...
