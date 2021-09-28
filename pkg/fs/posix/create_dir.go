@@ -11,8 +11,8 @@ import (
 
 func (fs *Posix) CreateDir(d *fs.Directory) error {
 	log.WithFields(log.Fields{
-		"user": d.User,
-		"group": d.Group,
+		"user":        d.User,
+		"group":       d.Group,
 		"permissions": d.Permissions,
 	}).Infof("Apply directory `%s`", d.Path)
 
@@ -42,19 +42,21 @@ func (fs *Posix) CreateDir(d *fs.Directory) error {
 
 	_, err = os.Stat(d.Path)
 	if os.IsNotExist(err) {
-		log.Debugf("Directory `%s` doesn't exists", d.Path)
+		log.Debugf("Create `%s` directory", d.Path)
 		err := os.MkdirAll(d.Path, d.Permissions)
-		if err != nil  {
+		if err != nil {
 			return fmt.Errorf("can't create directory: %v", err)
 		}
 	} else if err != nil {
 		return fmt.Errorf("can't check directory: %v", err)
 	}
 
+	log.Debugf("Change directory permission to %s", d.Permissions)
 	if err := os.Chmod(d.Path, d.Permissions); err != nil {
 		return fmt.Errorf("can't change directory permissions: %v", err)
 	}
 
+	log.Debugf("Change directory owner to %s(%d):%s:(%d)", d.User, uid, d.Group, gid)
 	if err := os.Chown(d.Path, uid, gid); err != nil {
 		return fmt.Errorf("can't change directory permissions: %v", err)
 	}

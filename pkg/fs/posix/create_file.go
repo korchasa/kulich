@@ -31,6 +31,7 @@ func (fs *Posix) CreateFile(s *fs.File) (string, error) {
 
 	uri, _ := url.Parse(s.From)
 	if uri.Scheme != "" {
+		log.Debugf("Download content from `%s`", uri.String())
 		nb, path, err := fs.download(uri, fp)
 		if err != nil {
 			return "", fmt.Errorf("can't download file from url `%s`: %v", uri, err)
@@ -38,6 +39,7 @@ func (fs *Posix) CreateFile(s *fs.File) (string, error) {
 		log.Debugf("File downloaded from `%s` to `%s` (%d bytes)", uri, s.Path, nb)
 		s.From = path
 	} else {
+		log.Debugf("Copy file content from `%s`", s.From)
 		nb, err := fs.copy(s.From, fp)
 		if err != nil {
 			return "", fmt.Errorf("can't copy file from `%s`: %v", s.From, err)
@@ -45,14 +47,17 @@ func (fs *Posix) CreateFile(s *fs.File) (string, error) {
 		log.Debugf("File copied from `%s` to `%s` (%d bytes)", s.From, s.Path, nb)
 	}
 
+	log.Debugf("Change file permissions to %s", s.Permissions)
 	if err := fp.Chmod(s.Permissions); err != nil {
 		return "", fmt.Errorf("can't change file permissions: %v", err)
 	}
 
+	log.Debugf("Change directory owner to %s(%d):%s:(%d)", s.User, uid, s.Group, gid)
 	if err := fp.Chown(uid, gid); err != nil {
 		return "", fmt.Errorf("can't change file permissions: %v", err)
 	}
 
+	log.Debugf("Calculate file hash")
 	hash, err := calcHash(fp)
 	if err != nil {
 		return "", fmt.Errorf("can't calculate sha256: %v", err)
@@ -91,12 +96,14 @@ func lookupUsers(s *fs.File) (int, int, error) {
 func ensureFile(path string) (*os.File, error) {
 	info, err := os.Stat(path)
 	if os.IsNotExist(err) {
+		log.Debugf("Create file `%s`", path)
 		return os.Create(path)
 	}
 	if err != nil {
 		return nil, fmt.Errorf("can't get file stat: %v", err)
 	}
 	if info.IsDir() {
+		log.Debugf("Remove directory `%s`", path)
 		if err := os.Remove(path); err != nil {
 			return nil, fmt.Errorf("can't remove directory: %v", err)
 		}
