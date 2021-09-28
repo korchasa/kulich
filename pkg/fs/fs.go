@@ -1,10 +1,23 @@
-package file_system
+package fs
 
 import (
 	"fmt"
 	"io/fs"
 	"strings"
 )
+
+type DriverConfig struct {
+	Driver  string
+	TempDir string
+	DryRun  bool
+}
+
+type Driver interface {
+	Setup(conf *DriverConfig) error
+	CreateFile(f *File) error
+	CreateDir(dir *Directory) error
+	Remove(path string) error
+}
 
 type File struct {
 	Path         string
@@ -72,16 +85,4 @@ func (d *Directory) Validate() error {
 		return fmt.Errorf("directory permissions is empty")
 	}
 	return nil
-}
-
-type FsDriverConfig struct {
-	Driver  string
-	TempDir string
-	DryRun  bool
-}
-
-type FsDriver interface {
-	Setup(c *FsDriverConfig) error
-	CreateFile(f *File) error
-	CreateDir(d *Directory) error
 }

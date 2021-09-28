@@ -1,16 +1,16 @@
 package packages
 
+type Driver interface {
+	Setup(c *DriverConfig) error
+	InstallPackage(p *Package) error
+}
+
 type Package struct {
 	Name string
 	Removed bool
 }
 
-type PackageDriverConfig struct {
+type DriverConfig struct {
 	Driver string
 	AdditionalSources []string
-}
-
-type PackageDriver interface {
-	Setup(c *PackageDriverConfig) error
-	InstallPackage(p *Package) error
 }

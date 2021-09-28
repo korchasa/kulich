@@ -1,7 +1,7 @@
 package posix
 
 import (
-	"github.com/korchasa/ruchki/pkg/file_system"
+	"github.com/korchasa/ruchki/pkg/fs"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
 	"os"
@@ -31,8 +31,8 @@ func (suite *CreateFileTestSuite) TestCopyLocal() {
 
 	err := os.WriteFile(src, expectedContent, 0644)
 	assert.NoError(t, err)
-	pfs := &Posix{}
-	actualHash, err := pfs.CreateFile(&file_system.File{
+	pfs := NewPosix(&fs.DriverConfig{})
+	actualHash, err := pfs.CreateFile(&fs.File{
 		Path:        dst,
 		From:        src,
 		User:        "nobody",
@@ -55,8 +55,8 @@ func (suite *CreateFileTestSuite) TestDownload() {
 	expectedHash := "9d4489776118489c010b49e8001fa93eb94842f99f51f488b44c361a7b007d99"
 	dst := suite.TestDir + "/test_from_uri.zip"
 
-	pfs := &Posix{}
-	actualHash, err := pfs.CreateFile(&file_system.File{
+	pfs := NewPosix(&fs.DriverConfig{})
+	actualHash, err := pfs.CreateFile(&fs.File{
 		Path:        dst,
 		From:        src,
 		User:        "nobody",

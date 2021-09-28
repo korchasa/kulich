@@ -1,18 +1,18 @@
 package firewall
 
-type FirewallRule struct {
+type Driver interface {
+	Setup(c *DriverConfig) error
+	ApplyRule(f *Rule) error
+}
+
+type Rule struct {
 	Port int
 	Sources []string
 	Output bool
 }
 
-type FirewallDriverConfig struct {
+type DriverConfig struct {
 	Driver string
 	EnabledInput bool
 	EnabledOutput bool
-}
-
-type FirewallDriver interface {
-	Setup(c *FirewallDriverConfig) error
-	ApplyRule(f *FirewallRule) error
 }

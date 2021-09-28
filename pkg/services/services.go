@@ -1,15 +1,15 @@
 package services
 
+type Driver interface {
+	Enable(name string) error
+	Disable(name string) error
+}
+
 type Service struct {
 	Name string
 	Enabled bool
 }
 
-type ServicesDriverConfig struct {
+type DriverConfig struct {
 	Driver string
-}
-
-type ServicesDriver interface {
-	Enable(name string) error
-	Disable(name string) error
 }

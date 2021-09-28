@@ -1,7 +1,7 @@
 package posix
 
 import (
-	"github.com/korchasa/ruchki/pkg/file_system"
+	"github.com/korchasa/ruchki/pkg/fs"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
 	"os"
@@ -24,8 +24,8 @@ func (suite *CreateDirTestSuite) SetupTest() {
 func (suite *CreateDirTestSuite) TestCreateDir() {
 	t := suite.T()
 	p := suite.TestDir + "/empty"
-	fs := &Posix{}
-	err := fs.CreateDir(&file_system.Directory{
+	pfs := NewPosix(&fs.DriverConfig{})
+	err := pfs.CreateDir(&fs.Directory{
 		Path:        p,
 		User:        "nobody",
 		Group:       "nobody",

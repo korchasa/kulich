@@ -1,6 +1,10 @@
-package operation_system
+package os
 
 import "time"
+
+type Driver interface {
+	Setup(c *DriverConfig) error
+}
 
 type User struct {
 	Name string
@@ -15,6 +19,3 @@ type DriverConfig struct {
 	Envs map[string]string
 }
 
-type Driver interface {
-	Setup(c *DriverConfig) error
-}

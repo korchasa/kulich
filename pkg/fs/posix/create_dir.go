@@ -2,21 +2,21 @@ package posix
 
 import (
 	"fmt"
-	"github.com/korchasa/ruchki/pkg/file_system"
+	"github.com/korchasa/ruchki/pkg/fs"
 	log "github.com/sirupsen/logrus"
 	"os"
 	"os/user"
 	"strconv"
 )
 
-func (fs *Posix) CreateDir(d *file_system.Directory) error {
+func (fs *Posix) CreateDir(d *fs.Directory) error {
 	log.WithFields(log.Fields{
 		"user": d.User,
 		"group": d.Group,
 		"permissions": d.Permissions,
 	}).Infof("Apply directory `%s`", d.Path)
 
-	if fs.dryRun {
+	if fs.conf.DryRun {
 		return nil
 	}
 

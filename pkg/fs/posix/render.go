@@ -1,6 +1,6 @@
 package posix
 
-func Render(file string, vars interface{}) (int64, error) {
+func (fs *Posix) render(file string, vars interface{}) (int64, error) {
 	//sourceFileStat, err := os.Stat(*s.FromLocal)
 	//if err != nil {
 	//	return 0, err

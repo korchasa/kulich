@@ -3,7 +3,7 @@ package posix
 import (
 	"crypto/sha256"
 	"fmt"
-	"github.com/korchasa/ruchki/pkg/file_system"
+	"github.com/korchasa/ruchki/pkg/fs"
 	log "github.com/sirupsen/logrus"
 	"io"
 	"net/url"
@@ -12,9 +12,9 @@ import (
 	"strconv"
 )
 
-func (fs *Posix) CreateFile(s *file_system.File) (string, error) {
+func (fs *Posix) CreateFile(s *fs.File) (string, error) {
 	log.Infof("Apply file %s", s.String())
-	if fs.dryRun {
+	if fs.conf.DryRun {
 		return "", nil
 	}
 
@@ -31,14 +31,14 @@ func (fs *Posix) CreateFile(s *file_system.File) (string, error) {
 
 	uri, _ := url.Parse(s.From)
 	if uri.Scheme != "" {
-		nb, path, err := Download(uri, fp)
+		nb, path, err := fs.download(uri, fp)
 		if err != nil {
 			return "", fmt.Errorf("can't download file from url `%s`: %v", uri, err)
 		}
 		log.Debugf("File downloaded from `%s` to `%s` (%d bytes)", uri, s.Path, nb)
 		s.From = path
 	} else {
-		nb, err := Copy(s.From, fp)
+		nb, err := fs.copy(s.From, fp)
 		if err != nil {
 			return "", fmt.Errorf("can't copy file from `%s`: %v", s.From, err)
 		}
@@ -65,7 +65,7 @@ func (fs *Posix) CreateFile(s *file_system.File) (string, error) {
 	return hash, nil
 }
 
-func lookupUsers(s *file_system.File) (int, int, error) {
+func lookupUsers(s *fs.File) (int, int, error) {
 	log.Debugf("Search for user `%s`", s.User)
 	us, err := user.Lookup(s.User)
 	if err != nil {

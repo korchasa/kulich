@@ -6,7 +6,7 @@ import (
 	"os"
 )
 
-func Copy(src string, destination *os.File) (int64, error) {
+func (fs *Posix) copy(src string, destination *os.File) (int64, error) {
 	sourceFileStat, err := os.Stat(src)
 	if err != nil {
 		return 0, err
