@@ -103,7 +103,7 @@ func ensureFile(path string) (*os.File, error) {
 		return nil, fmt.Errorf("can't get file stat: %v", err)
 	}
 	if info.IsDir() {
-		log.Debugf("Remove directory `%s`", path)
+		log.Debugf("Delete directory `%s`", path)
 		if err := os.Remove(path); err != nil {
 			return nil, fmt.Errorf("can't remove directory: %v", err)
 		}

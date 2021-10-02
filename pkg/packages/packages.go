@@ -1,16 +1,14 @@
 package packages
 
-type Driver interface {
-	Setup(c *DriverConfig) error
-	InstallPackage(p *Package) error
-}
+import "context"
 
-type Package struct {
-	Name string
-	Removed bool
+type Driver interface {
+	Setup(ctx context.Context, c *DriverConfig) error
+	Init(ctx context.Context, c *DriverConfig) error
+	InstallPackage(ctx context.Context, name string) error
+	RemovePackage(ctx context.Context, name string) error
 }
 
 type DriverConfig struct {
-	Driver string
-	AdditionalSources []string
+	DryRun bool
 }
