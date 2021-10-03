@@ -16,7 +16,7 @@ type CreateDirTestSuite struct {
 func (suite *CreateDirTestSuite) SetupTest() {
 	suite.TestDir = os.Getenv("TEST_DIR")
 	if suite.TestDir == "" {
-		suite.TestDir = "./tmp"
+		suite.TestDir = ".tmp"
 	}
 	_ = os.RemoveAll(suite.TestDir)
 }

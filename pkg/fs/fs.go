@@ -23,7 +23,7 @@ type File struct {
 	Path         string
 	From         string
 	IsTemplate   bool
-	TemplateVars *interface{}
+	TemplateVars interface{}
 	IsCompressed bool
 	User         string
 	Group        string

@@ -32,7 +32,7 @@ func (fs *Posix) CreateFile(s *fs.File) (string, error) {
 	uri, _ := url.Parse(s.From)
 	if uri.Scheme != "" {
 		log.Debugf("Download content from `%s`", uri.String())
-		nb, path, err := fs.download(uri, fp)
+		nb, path, err := fs.download(fp, uri)
 		if err != nil {
 			return "", fmt.Errorf("can't download file from url `%s`: %v", uri, err)
 		}
@@ -40,11 +40,22 @@ func (fs *Posix) CreateFile(s *fs.File) (string, error) {
 		s.From = path
 	} else {
 		log.Debugf("Copy file content from `%s`", s.From)
-		nb, err := fs.copy(s.From, fp)
+		nb, err := fs.copy(fp, s.From)
 		if err != nil {
 			return "", fmt.Errorf("can't copy file from `%s`: %v", s.From, err)
 		}
 		log.Debugf("File copied from `%s` to `%s` (%d bytes)", s.From, s.Path, nb)
+	}
+
+	currentPosition, _ := fp.Seek(0, 1)
+	log.Warnf("current position: %d", currentPosition)
+
+	if s.IsTemplate {
+		log.Debugf("Render template")
+		err = fs.render(fp, s.TemplateVars)
+		if err != nil {
+			return "", fmt.Errorf("can't render template: %v", err)
+		}
 	}
 
 	log.Debugf("Change file permissions to %s", s.Permissions)
@@ -108,7 +119,14 @@ func ensureFile(path string) (*os.File, error) {
 			return nil, fmt.Errorf("can't remove directory: %v", err)
 		}
 	}
-	return os.Open(path)
+	f, err := os.Open(path)
+	if err != nil {
+		return nil, fmt.Errorf("can't open file: %v", err)
+	}
+	if _, err := f.Seek(0, 0); err != nil {
+		return nil, fmt.Errorf("can't return to begin of file: %v", err)
+	}
+	return f, nil
 }
 
 func calcHash(f *os.File) (string, error) {

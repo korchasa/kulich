@@ -6,7 +6,7 @@ import (
 	"os"
 )
 
-func (fs *Posix) copy(src string, destination *os.File) (int64, error) {
+func (fs *Posix) copy(dst *os.File, src string) (int64, error) {
 	sourceFileStat, err := os.Stat(src)
 	if err != nil {
 		return 0, err
@@ -22,6 +22,7 @@ func (fs *Posix) copy(src string, destination *os.File) (int64, error) {
 	}
 	defer source.Close()
 
-	nBytes, err := io.Copy(destination, source)
+	nBytes, err := io.Copy(dst, source)
+
 	return nBytes, err
 }

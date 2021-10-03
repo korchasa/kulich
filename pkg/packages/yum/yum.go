@@ -22,7 +22,7 @@ func (y *Yum) Setup(_ context.Context) error {
 	if y.conf.DryRun {
 		return nil
 	}
-	panic("implement me")
+	return nil
 }
 
 func (y *Yum) Init(ctx context.Context) error {

@@ -17,31 +17,31 @@ func TestFileValidate(t *testing.T) {
 		},
 		{
 			"file source not specified",
-			&File{Path: "./sandbox/dst.txt", From: "", User: "nobody", Group: "nobody", Permissions: 0755},
+			&File{Path: ".tmp/dst.txt", From: "", User: "nobody", Group: "nobody", Permissions: 0755},
 		},
 		{
 			"file user not specified",
-			&File{Path: "./sandbox/dst.txt", From: "./src.txt", Group: "nobody", Permissions: 0755},
+			&File{Path: ".tmp/dst.txt", From: "./src.txt", Group: "nobody", Permissions: 0755},
 		},
 		{
 			"file group not specified",
-			&File{Path: "./sandbox/dst.txt", From: "./src.txt", User: "nobody", Permissions: 0755},
+			&File{Path: ".tmp/dst.txt", From: "./src.txt", User: "nobody", Permissions: 0755},
 		},
 		{
 			"file permissions not specified",
-			&File{Path: "./sandbox/dst.txt", From: "./src.txt", User: "nobody", Group: "nobody"},
+			&File{Path: ".tmp/dst.txt", From: "./src.txt", User: "nobody", Group: "nobody"},
 		},
 		{
 			"can't find file user: user: unknown user unknown",
-			&File{Path: "./sandbox/dst.txt", From: "./src.txt", User: "unknown", Group: "nobody", Permissions: 0755},
+			&File{Path: ".tmp/dst.txt", From: "./src.txt", User: "unknown", Group: "nobody", Permissions: 0755},
 		},
 		{
 			"can't find file group: group: unknown group unknown",
-			&File{Path: "./sandbox/dst.txt", From: "./src.txt", User: "nobody", Group: "unknown", Permissions: 0755},
+			&File{Path: ".tmp/dst.txt", From: "./src.txt", User: "nobody", Group: "unknown", Permissions: 0755},
 		},
 		{
 			"can't copy file from `./src.txt`: stat ./src.txt: no such file or directory",
-			&File{Path: "./sandbox/dst.txt", From: "./src.txt", User: "nobody", Group: "nobody", Permissions: 0755},
+			&File{Path: ".tmp/dst.txt", From: "./src.txt", User: "nobody", Group: "nobody", Permissions: 0755},
 		},
 	}
 	for _, tt := range tests {
