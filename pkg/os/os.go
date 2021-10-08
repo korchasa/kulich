@@ -7,15 +7,14 @@ type Driver interface {
 }
 
 type User struct {
-	Name string
+	Name  string
 	Shell string
-	Home string
+	Home  string
 }
 
 type DriverConfig struct {
 	Hostname string
-	Selinux string
+	Selinux  string
 	Timezone time.Location
-	Envs map[string]string
+	Envs     map[string]string
 }
-

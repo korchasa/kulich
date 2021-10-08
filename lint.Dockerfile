@@ -1,15 +1,14 @@
 FROM golang:1.17.1-alpine3.14 as build
-ARG APP_VERSION
+
 ENV \
     TERM=xterm-color \
     TIME_ZONE="UTC" \
     CGO_ENABLED=0 \
     GOOS=linux \
-    GOARCH=amd64 \
-    GOFLAGS="-mod=vendor" \
-    GOLANGCI_VERSION="1.39.0" \
-    GOLANGCI_HASHSUM="3a73aa7468087caa62673c8adea99b4e4dff846dc72707222db85f8679b40cbf"
-WORKDIR /app
+    GOARCH=arm64 \
+    GOLANGCI_VERSION="1.42.1" \
+    GOLANGCI_HASHSUM="0fbb58f36933b502bc841f8b28a5c609ac030d3a843fe1ea2dce2cee3a2b0d10"
+
 RUN \
     echo "## Prepare timezone" && \
     apk add --no-cache --update tzdata coreutils && \
@@ -17,29 +16,16 @@ RUN \
     echo "${TIME_ZONE}" > /etc/timezone && date
 
 RUN echo "## Install golangci"
-ADD https://github.com/golangci/golangci-lint/releases/download/v${GOLANGCI_VERSION}/golangci-lint-${GOLANGCI_VERSION}-linux-amd64.tar.gz ./golangci-lint.tar.gz
+ADD https://github.com/golangci/golangci-lint/releases/download/v${GOLANGCI_VERSION}/golangci-lint-${GOLANGCI_VERSION}-linux-${GOARCH}.tar.gz ./golangci-lint.tar.gz
 RUN echo "${GOLANGCI_HASHSUM}  golangci-lint.tar.gz" | sha256sum -c -
 RUN tar -xzf golangci-lint.tar.gz
-RUN cp ./golangci-lint-${GOLANGCI_VERSION}-linux-amd64/golangci-lint /usr/bin/
+RUN cp ./golangci-lint-${GOLANGCI_VERSION}-linux-${GOARCH}/golangci-lint /usr/bin/
 RUN golangci-lint --version
 
-ADD . .
-RUN go mod vendor
-RUN golangci-lint run -v --timeout 3m
+WORKDIR /work
+ADD go.* .
+ADD pkg pkg
+ADD vendor vendor
+ADD .golangci.yml .golangci.yml
 
-#######################
-#FROM centos:7
-#
-#WORKDIR /app
-#
-#COPY --from=build /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
-#COPY --from=build /usr/share/zoneinfo /usr/share/zoneinfo
-#COPY --from=build /etc/localtime /etc/localtime
-#COPY --from=build /etc/passwd /etc/passwd
-#COPY --from=build /etc/group /etc/group
-#
-#COPY --from=build /app/app /app/app
-#
-#USER nobody:nobody
-#
-#ENTRYPOINT ["/app/app"]
+CMD golangci-lint run --timeout 3m --color always --verbose --out-format colored-line-number

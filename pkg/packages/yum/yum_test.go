@@ -1,12 +1,15 @@
-package yum
+package yum_test
 
 import (
 	"context"
+	"github.com/korchasa/ruchki/pkg/packages/yum"
+	"github.com/stretchr/testify/suite"
+	"testing"
+
 	"github.com/korchasa/ruchki/pkg/packages"
-	"github.com/korchasa/ruchki/pkg/shell/posix"
+	"github.com/korchasa/ruchki/pkg/sysshell/posix"
 	log "github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
-	"testing"
 )
 
 //var execMock func(path string, args ...string) (*shell.Result, error)
@@ -17,37 +20,45 @@ import (
 //	return execMock(path, args...)
 //}
 
-func init() {
-	log.SetLevel(log.DebugLevel)
+type YumIntegrationTestSuite struct {
+	suite.Suite
+}
+
+func (suite *YumIntegrationTestSuite) SetupTest() {
+	// log.SetLevel(log.DebugLevel)
 	log.SetFormatter(&log.TextFormatter{
 		DisableQuote: true,
 	})
 }
 
-func TestYum_Init(t *testing.T) {
+func TestYumIntegrationTestSuite(t *testing.T) {
+	suite.Run(t, new(YumIntegrationTestSuite))
+}
+
+func (suite *YumIntegrationTestSuite) TestYum_Init() {
 	sh := posix.New()
-	mng := New(&packages.DriverConfig{}, sh)
+	mng := yum.New(&packages.DriverConfig{}, sh)
 	err := mng.Init(context.Background())
-	assert.NoError(t, err)
+	assert.NoError(suite.T(), err)
 }
 
-func TestYum_RemovePackage(t *testing.T) {
+func (suite *YumIntegrationTestSuite) TestYum_RemovePackage() {
 	sh := posix.New()
-	mng := New(&packages.DriverConfig{}, sh)
-	assert.NoError(t, mng.RemovePackage(context.Background(), "epel-release"))
+	mng := yum.New(&packages.DriverConfig{}, sh)
+	assert.NoError(suite.T(), mng.RemovePackage(context.Background(), "epel-release"))
 }
 
-func TestYum_InstallPackage(t *testing.T) {
+func (suite *YumIntegrationTestSuite) TestYum_InstallPackage() {
 	sh := posix.New()
-	mng := New(&packages.DriverConfig{}, sh)
-	assert.NoError(t, mng.InstallPackage(context.Background(), "epel-release"))
+	mng := yum.New(&packages.DriverConfig{}, sh)
+	assert.NoError(suite.T(), mng.InstallPackage(context.Background(), "epel-release"))
 }
 
-func TestYum_InstallPackage_Repeat(t *testing.T) {
+func (suite *YumIntegrationTestSuite) TestYum_InstallPackage_Repeat() {
 	sh := posix.New()
-	mng := New(&packages.DriverConfig{}, sh)
-	assert.NoError(t, mng.InstallPackage(context.Background(), "epel-release"))
-	assert.NoError(t, mng.InstallPackage(context.Background(), "epel-release"))
+	mng := yum.New(&packages.DriverConfig{}, sh)
+	assert.NoError(suite.T(), mng.InstallPackage(context.Background(), "epel-release"))
+	assert.NoError(suite.T(), mng.InstallPackage(context.Background(), "epel-release"))
 }
 
 //func TestYum_AddSource(t *testing.T) {

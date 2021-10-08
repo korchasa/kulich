@@ -6,7 +6,7 @@ type Driver interface {
 }
 
 type Service struct {
-	Name string
+	Name    string
 	Enabled bool
 }
 

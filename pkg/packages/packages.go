@@ -1,6 +1,8 @@
 package packages
 
-import "context"
+import (
+	"context"
+)
 
 type Driver interface {
 	Setup(ctx context.Context, c *DriverConfig) error

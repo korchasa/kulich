@@ -1,4 +1,4 @@
-package shell
+package sysshell
 
 import (
 	"context"

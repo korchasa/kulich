@@ -3,17 +3,19 @@ package yum
 import (
 	"context"
 	"fmt"
+	"time"
+
 	"github.com/korchasa/ruchki/pkg/packages"
-	"github.com/korchasa/ruchki/pkg/shell"
+	"github.com/korchasa/ruchki/pkg/sysshell"
 	log "github.com/sirupsen/logrus"
 )
 
 type Yum struct {
 	conf *packages.DriverConfig
-	sh   shell.Shell
+	sh   sysshell.Shell
 }
 
-func New(conf *packages.DriverConfig, sh shell.Shell) *Yum {
+func New(conf *packages.DriverConfig, sh sysshell.Shell) *Yum {
 	return &Yum{conf: conf, sh: sh}
 }
 
@@ -32,7 +34,7 @@ func (y *Yum) Init(ctx context.Context) error {
 	}
 	res, err := y.sh.Exec(ctx, "yum", "makecache", "fast")
 	if err != nil {
-		return fmt.Errorf("can't update cache: %v", err)
+		return fmt.Errorf("can't update cache: %w", err)
 	}
 	if res.Exit != 0 {
 		return fmt.Errorf("cache update exit with non-zero code `%d`: %s", res.Exit, res.Stderr)
@@ -46,18 +48,21 @@ func (y *Yum) InstallPackage(ctx context.Context, name string) error {
 		return nil
 	}
 
+	s := sectionStart("Check package already installed")
 	installed, err := y.installed(ctx, name)
 	if err != nil {
-		return fmt.Errorf("can't check package installed or not: %v", err)
+		return fmt.Errorf("can't check package installed or not: %w", err)
 	}
+	sectionEnd(s)
 	if installed {
-		log.Infof("Package `%s` already installed", name)
+		log.Debugf("Package `%s` already installed", name)
 		return nil
 	}
 
+	log.Debugf("Run package install")
 	res, err := y.sh.Exec(ctx, "yum", "install", name, "--assumeyes")
 	if err != nil {
-		return fmt.Errorf("can't install package `%s`: %v", name, err)
+		return fmt.Errorf("can't install package `%s`: %w", name, err)
 	}
 	if res.Exit != 0 {
 		return fmt.Errorf("`%s` package install exit with non-zero code `%d`: %s", name, res.Exit, res.Stderr)
@@ -65,15 +70,32 @@ func (y *Yum) InstallPackage(ctx context.Context, name string) error {
 	return nil
 }
 
+type Section struct {
+	Name  string
+	Start time.Time
+}
+
+func sectionStart(n string) *Section {
+	log.Debugf("%s...", n)
+	return &Section{
+		Name:  n,
+		Start: time.Now(),
+	}
+}
+
+func sectionEnd(s *Section) {
+	log.Debugf("%s...DONE (%.2fs)", s.Name, time.Since(s.Start).Seconds())
+}
+
 func (y *Yum) RemovePackage(ctx context.Context, name string) error {
-	log.Infof("Install package `%s`", name)
+	log.Infof("Remove package `%s`", name)
 	if y.conf.DryRun {
 		return nil
 	}
 
 	installed, err := y.installed(ctx, name)
 	if err != nil {
-		return fmt.Errorf("can't check package installed or not: %v", err)
+		return fmt.Errorf("can't check package installed or not: %w", err)
 	}
 	if !installed {
 		log.Infof("Package `%s` not installed", name)
@@ -82,7 +104,7 @@ func (y *Yum) RemovePackage(ctx context.Context, name string) error {
 
 	res, err := y.sh.Exec(ctx, "yum", "remove", name, "--assumeyes")
 	if err != nil {
-		return fmt.Errorf("can't remove package `%s`: %v", name, err)
+		return fmt.Errorf("can't remove package `%s`: %w", name, err)
 	}
 	if res.Exit != 0 {
 		return fmt.Errorf("`%s` package remove exit with non-zero code `%d`: %s", name, res.Exit, res.Stderr)
@@ -93,7 +115,7 @@ func (y *Yum) RemovePackage(ctx context.Context, name string) error {
 func (y *Yum) installed(ctx context.Context, name string) (bool, error) {
 	res, err := y.sh.Exec(ctx, "yum", "list", "installed", name, "--assumeyes")
 	if err != nil {
-		return false, fmt.Errorf("can't exec yum: %v", err)
+		return false, fmt.Errorf("can't exec yum: %w", err)
 	}
 	if res.Exit > 1 {
 		return false, fmt.Errorf("yum exit with invalid code `%d`: %s", res.Exit, res.Stderr)

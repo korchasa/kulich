@@ -1,20 +1,23 @@
-FROM centos:7
+FROM centos:centos7.9.2009
 
-ENV GO_VERSION 1.17
-ENV GO_ARCH arm64
+ENV \
+    TERM=xterm-color \
+    TIME_ZONE="UTC" \
+    CGO_ENABLED=0 \
+    GO_VERSION=1.17.1 \
+    GOOS=linux \
+    GOARCH=arm64 \
+    GOFLAGS="-mod=vendor"
 
-WORKDIR /
-
-ADD https://dl.google.com/go/go$GO_VERSION.linux-$GO_ARCH.tar.gz /tmp/
-RUN tar -xzf /tmp/go$GO_VERSION.linux-$GO_ARCH.tar.gz \
+ADD https://dl.google.com/go/go$GO_VERSION.linux-$GOARCH.tar.gz /tmp/
+RUN tar -xzf /tmp/go$GO_VERSION.linux-$GOARCH.tar.gz \
     && rm -rf /usr/local/go \
-    && tar -C /usr/local -xzf /tmp/go$GO_VERSION.linux-$GO_ARCH.tar.gz \
+    && tar -C /usr/local -xzf /tmp/go$GO_VERSION.linux-$GOARCH.tar.gz \
     && ln -s /usr/local/go/bin/go /bin/go
 
-RUN yum update -y \
-    && yum -y install gcc
-
 WORKDIR /work
+ADD go.* .
+ADD pkg .
+ADD vendor .
 
-ADD . .
 CMD go test ./...

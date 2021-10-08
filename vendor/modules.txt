@@ -8,7 +8,6 @@ github.com/Masterminds/semver
 ## explicit
 github.com/Masterminds/sprig
 # github.com/davecgh/go-spew v1.1.1
-## explicit
 github.com/davecgh/go-spew/spew
 # github.com/google/uuid v1.3.0
 ## explicit

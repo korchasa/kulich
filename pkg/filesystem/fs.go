@@ -1,4 +1,4 @@
-package fs
+package filesystem
 
 import (
 	"fmt"
@@ -28,6 +28,7 @@ type File struct {
 	User         string
 	Group        string
 	Permissions  fs.FileMode
+	Sha256Hash   string
 }
 
 func (f *File) Validate() error {
@@ -46,6 +47,7 @@ func (f *File) Validate() error {
 	if f.Permissions == 0 {
 		return fmt.Errorf("file permissions not specified")
 	}
+
 	return nil
 }
 
@@ -61,7 +63,8 @@ func (f *File) String() string {
 	sb = append(sb, fmt.Sprintf("user=%s", f.User))
 	sb = append(sb, fmt.Sprintf("group=%s", f.Group))
 	sb = append(sb, fmt.Sprintf("permissions=%s", f.Permissions))
-	return strings.Join(sb[:], " ")
+
+	return strings.Join(sb, " ")
 }
 
 type Directory struct {
@@ -84,5 +87,6 @@ func (d *Directory) Validate() error {
 	if d.Permissions == 0 {
 		return fmt.Errorf("directory permissions is empty")
 	}
+
 	return nil
 }

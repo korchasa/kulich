@@ -3,8 +3,9 @@ package posix
 import (
 	"bytes"
 	"context"
+	"errors"
 	"fmt"
-	"github.com/korchasa/ruchki/pkg/shell"
+	"github.com/korchasa/ruchki/pkg/sysshell"
 	log "github.com/sirupsen/logrus"
 	"os/exec"
 	"strings"
@@ -18,9 +19,9 @@ func New() *Posix {
 	return &Posix{}
 }
 
-func (p *Posix) Exec(ctx context.Context, path string, args ...string) (*shell.Result, error) {
-	log.Infof("Shell exec `%s %s`", path, strings.Join(args, " "))
-	res := &shell.Result{}
+func (p *Posix) Exec(ctx context.Context, path string, args ...string) (*sysshell.Result, error) {
+	log.Debugf("Shell exec `%s %s`", path, strings.Join(args, " "))
+	res := &sysshell.Result{}
 	var stdout, stderr bytes.Buffer
 
 	cmd := exec.CommandContext(ctx, path, args...)
@@ -29,14 +30,15 @@ func (p *Posix) Exec(ctx context.Context, path string, args ...string) (*shell.R
 
 	err := cmd.Run()
 	if err != nil {
-		if exitError, ok := err.(*exec.ExitError); ok {
-			res.Exit = exitError.ExitCode()
+		var e *exec.ExitError
+		if errors.As(err, &e) {
+			res.Exit = e.ExitCode()
 		} else {
-			return nil, fmt.Errorf("can't exec `%s %s`: %v", path, strings.Join(args, " "), err)
+			return nil, fmt.Errorf("can't exec `%s %s`: %w", path, strings.Join(args, " "), err)
 		}
 	}
 
-	outStr, errStr := string(stdout.Bytes()), string(stderr.Bytes())
+	outStr, errStr := stdout.String(), stdout.String()
 	res.Stdout = strings.Split(outStr, "\n")
 	res.Stderr = strings.Split(errStr, "\n")
 
@@ -46,12 +48,16 @@ func (p *Posix) Exec(ctx context.Context, path string, args ...string) (*shell.R
 		Result: res,
 	})
 
-	log.Debugf("Shell exec complete with code `%d`\nstdout: %s\n stderr: %s", res.Exit, outStr, errStr)
+	log.Debugf(`Shell exec complete with code "%d"\n
+### stdout ##################\n
+%s\n
+### stderr ##################\n
+%s\n`, res.Exit, outStr, errStr)
 	return res, nil
 }
 
 type HistoryExec struct {
 	Path   string
 	Args   []string
-	Result *shell.Result
+	Result *sysshell.Result
 }
