@@ -28,7 +28,7 @@ type File struct {
 	User         string
 	Group        string
 	Permissions  fs.FileMode
-	Sha256Hash   string
+	Hash         string
 }
 
 func (f *File) Validate() error {
@@ -49,6 +49,25 @@ func (f *File) Validate() error {
 	}
 
 	return nil
+}
+
+func (f *File) Diffs(a *File) (diffs []string) {
+	if f.Path != a.Path {
+		diffs = append(diffs, fmt.Sprintf("path: %s != %s", f.Path, a.Path))
+	}
+	if f.Permissions != a.Permissions {
+		diffs = append(diffs, fmt.Sprintf("permisssions: %s != %s", f.Permissions, a.Permissions))
+	}
+	if f.User != a.User {
+		diffs = append(diffs, fmt.Sprintf("user: %s != %s", f.User, a.User))
+	}
+	if f.Group != a.Group {
+		diffs = append(diffs, fmt.Sprintf("group: %s != %s", f.Group, a.Group))
+	}
+	if f.Hash != a.Hash {
+		diffs = append(diffs, fmt.Sprintf("content hash: %s != %s", f.Hash, a.Hash))
+	}
+	return diffs
 }
 
 func (f *File) String() string {
