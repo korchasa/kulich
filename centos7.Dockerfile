@@ -17,7 +17,8 @@ RUN tar -xzf /tmp/go$GO_VERSION.linux-$GOARCH.tar.gz \
 
 WORKDIR /work
 ADD go.* .
-ADD pkg .
-ADD vendor .
+ADD pkg pkg
+ADD vendor vendor
+ADD .golangci.yml .golangci.yml
 
-CMD go test ./...
+CMD go test -count=1 ./...
