@@ -19,11 +19,12 @@ type FsIntegrationTestSuite struct {
 func (suite *FsIntegrationTestSuite) SetupTest() {
 	// log.SetLevel(log.DebugLevel)
 	log.SetFormatter(&log.TextFormatter{
+		ForceColors:  true,
 		DisableQuote: true,
 	})
 }
 
-func TestCreateDirIntegrationTestSuite(t *testing.T) {
+func TestFsIntegrationTestSuite(t *testing.T) {
 	suite.Run(t, new(FsIntegrationTestSuite))
 }
 
