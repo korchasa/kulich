@@ -1375,6 +1375,27 @@ func EqualError(t TestingT, theError error, errString string, msgAndArgs ...inte
 	return true
 }
 
+// ErrorContains asserts that a function returned an error (i.e. not `nil`)
+// and that the error contains the specified substring.
+//
+//   actualObj, err := SomeFunction()
+//   assert.ErrorContains(t, err,  expectedErrorSubString)
+func ErrorContains(t TestingT, theError error, contains string, msgAndArgs ...interface{}) bool {
+	if h, ok := t.(tHelper); ok {
+		h.Helper()
+	}
+	if !Error(t, theError, msgAndArgs...) {
+		return false
+	}
+
+	actual := theError.Error()
+	if !strings.Contains(actual, contains) {
+		return Fail(t, fmt.Sprintf("Error %#v does not contain %#v", actual, contains), msgAndArgs...)
+	}
+
+	return true
+}
+
 // matchRegexp return true if a specified regexp matches a string.
 func matchRegexp(rx interface{}, str interface{}) bool {
 
@@ -1588,12 +1609,17 @@ func diff(expected interface{}, actual interface{}) string {
 	}
 
 	var e, a string
-	if et != reflect.TypeOf("") {
-		e = spewConfig.Sdump(expected)
-		a = spewConfig.Sdump(actual)
-	} else {
+
+	switch et {
+	case reflect.TypeOf(""):
 		e = reflect.ValueOf(expected).String()
 		a = reflect.ValueOf(actual).String()
+	case reflect.TypeOf(time.Time{}):
+		e = spewConfigStringerEnabled.Sdump(expected)
+		a = spewConfigStringerEnabled.Sdump(actual)
+	default:
+		e = spewConfig.Sdump(expected)
+		a = spewConfig.Sdump(actual)
 	}
 
 	diff, _ := difflib.GetUnifiedDiffString(difflib.UnifiedDiff{
@@ -1622,6 +1648,14 @@ var spewConfig = spew.ConfigState{
 	DisableCapacities:       true,
 	SortKeys:                true,
 	DisableMethods:          true,
+	MaxDepth:                10,
+}
+
+var spewConfigStringerEnabled = spew.ConfigState{
+	Indent:                  " ",
+	DisablePointerAddresses: true,
+	DisableCapacities:       true,
+	SortKeys:                true,
 	MaxDepth:                10,
 }
 
