@@ -2,7 +2,6 @@ package posix
 
 import (
 	"bytes"
-	"context"
 	"errors"
 	"fmt"
 	"github.com/korchasa/ruchki/pkg/sysshell"
@@ -19,12 +18,12 @@ func New() *Posix {
 	return &Posix{}
 }
 
-func (p *Posix) Exec(ctx context.Context, path string, args ...string) (*sysshell.Result, error) {
-	log.Debugf("Shell exec `%s %s`", path, strings.Join(args, " "))
+func (p *Posix) Exec(cmd *exec.Cmd) (*sysshell.Result, error) {
+	log.Debugf("Shell exec `%s %s`", cmd.Path, strings.Join(cmd.Args, " "))
 	res := &sysshell.Result{}
 	var stdout, stderr bytes.Buffer
 
-	cmd := exec.CommandContext(ctx, path, args...)
+	//cmd := exec.CommandContext(ctx, path, args...)
 	cmd.Stdout = &stdout
 	cmd.Stderr = &stderr
 
@@ -34,7 +33,7 @@ func (p *Posix) Exec(ctx context.Context, path string, args ...string) (*sysshel
 		if errors.As(err, &e) {
 			res.Exit = e.ExitCode()
 		} else {
-			return nil, fmt.Errorf("can't exec `%s %s`: %w", path, strings.Join(args, " "), err)
+			return nil, fmt.Errorf("can't exec `%s %s`: %w", cmd.Path, strings.Join(cmd.Args, " "), err)
 		}
 	}
 
@@ -43,9 +42,8 @@ func (p *Posix) Exec(ctx context.Context, path string, args ...string) (*sysshel
 	res.Stderr = strings.Split(errStr, "\n")
 
 	p.History = append(p.History, HistoryExec{
-		Path:   path,
-		Args:   args,
-		Result: res,
+		Command: cmd,
+		Result:  res,
 	})
 
 	log.Debugf(`Shell exec complete with code "%d"\n
@@ -56,8 +54,31 @@ func (p *Posix) Exec(ctx context.Context, path string, args ...string) (*sysshel
 	return res, nil
 }
 
+func (p *Posix) SafeExec(command string) ([]string, error) {
+	parts := strings.Split(command, " ")
+	res, err := p.Exec(&exec.Cmd{
+		Path:         parts[0],
+		Args:         parts,
+		Env:          nil,
+		Dir:          "",
+		Stdin:        nil,
+		Stdout:       nil,
+		Stderr:       nil,
+		ExtraFiles:   nil,
+		SysProcAttr:  nil,
+		Process:      nil,
+		ProcessState: nil,
+	})
+	if err != nil {
+		return res.Stdout, err
+	}
+	if res.Exit != 0 {
+		return res.Stdout, fmt.Errorf("non-zero exit code (%d) from %s: %s", res.Exit, parts[0], strings.Join(res.Stderr, "\n"))
+	}
+	return res.Stdout, nil
+}
+
 type HistoryExec struct {
-	Path   string
-	Args   []string
-	Result *sysshell.Result
+	Command *exec.Cmd
+	Result  *sysshell.Result
 }

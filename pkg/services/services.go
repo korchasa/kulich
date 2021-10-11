@@ -1,15 +1,21 @@
 package services
 
 type Driver interface {
-	Enable(name string) error
-	Disable(name string) error
+	Add(s *Service) error
+	Remove(s *Service) error
 }
 
 type Service struct {
-	Name    string
-	Enabled bool
+	Name            string
+	Disabled        bool
+	RestartOnChange []Watcher
+}
+
+type Watcher struct {
+	Path string
+	Hash string
 }
 
 type DriverConfig struct {
-	Driver string
+	DryRun bool
 }

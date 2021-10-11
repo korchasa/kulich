@@ -14,7 +14,7 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-func (fs *Posix) CreateFile(s *filesystem.File) (string, error) {
+func (fs *Posix) AddFile(s *filesystem.File) (string, error) {
 	log.Infof("Apply file %s", s.String())
 	if fs.conf.DryRun {
 		return "", nil

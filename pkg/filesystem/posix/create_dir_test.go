@@ -10,7 +10,7 @@ func (suite *FsIntegrationTestSuite) TestCreateDir() {
 	t := suite.T()
 	p := t.TempDir() + "/empty"
 	pfs := posix.NewPosix(&filesystem.DriverConfig{})
-	err := pfs.CreateDir(&filesystem.Directory{
+	err := pfs.AddDir(&filesystem.Directory{
 		Path:        p,
 		User:        "nobody",
 		Group:       "nobody",

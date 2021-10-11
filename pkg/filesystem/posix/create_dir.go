@@ -8,7 +8,7 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-func (fs *Posix) CreateDir(d *filesystem.Directory) error {
+func (fs *Posix) AddDir(d *filesystem.Directory) error {
 	log.WithFields(log.Fields{
 		"user":        d.User,
 		"group":       d.Group,

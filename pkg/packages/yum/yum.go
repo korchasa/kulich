@@ -3,6 +3,7 @@ package yum
 import (
 	"context"
 	"fmt"
+	"os/exec"
 	"time"
 
 	"github.com/korchasa/ruchki/pkg/packages"
@@ -32,7 +33,7 @@ func (y *Yum) Init(ctx context.Context) error {
 	if y.conf.DryRun {
 		return nil
 	}
-	res, err := y.sh.Exec(ctx, "yum", "makecache", "fast")
+	res, err := y.sh.Exec(exec.Command("yum", "makecache", "fast"))
 	if err != nil {
 		return fmt.Errorf("can't update cache: %w", err)
 	}
@@ -42,7 +43,7 @@ func (y *Yum) Init(ctx context.Context) error {
 	return nil
 }
 
-func (y *Yum) InstallPackage(ctx context.Context, name string) error {
+func (y *Yum) Add(ctx context.Context, name string) error {
 	log.Infof("Install package `%s`", name)
 	if y.conf.DryRun {
 		return nil
@@ -60,7 +61,7 @@ func (y *Yum) InstallPackage(ctx context.Context, name string) error {
 	}
 
 	log.Debugf("Run package install")
-	res, err := y.sh.Exec(ctx, "yum", "install", name, "--assumeyes")
+	res, err := y.sh.Exec(exec.Command("yum", "install", name, "--assumeyes"))
 	if err != nil {
 		return fmt.Errorf("can't install package `%s`: %w", name, err)
 	}
@@ -87,7 +88,7 @@ func sectionEnd(s *Section) {
 	log.Debugf("%s...DONE (%.2fs)", s.Name, time.Since(s.Start).Seconds())
 }
 
-func (y *Yum) RemovePackage(ctx context.Context, name string) error {
+func (y *Yum) Remove(ctx context.Context, name string) error {
 	log.Infof("Remove package `%s`", name)
 	if y.conf.DryRun {
 		return nil
@@ -102,7 +103,7 @@ func (y *Yum) RemovePackage(ctx context.Context, name string) error {
 		return nil
 	}
 
-	res, err := y.sh.Exec(ctx, "yum", "remove", name, "--assumeyes")
+	res, err := y.sh.Exec(exec.Command("yum", "remove", name, "--assumeyes"))
 	if err != nil {
 		return fmt.Errorf("can't remove package `%s`: %w", name, err)
 	}
@@ -113,7 +114,7 @@ func (y *Yum) RemovePackage(ctx context.Context, name string) error {
 }
 
 func (y *Yum) installed(ctx context.Context, name string) (bool, error) {
-	res, err := y.sh.Exec(ctx, "yum", "list", "installed", name, "--assumeyes")
+	res, err := y.sh.Exec(exec.Command("yum", "list", "installed", name, "--assumeyes"))
 	if err != nil {
 		return false, fmt.Errorf("can't exec yum: %w", err)
 	}

@@ -14,8 +14,8 @@ type DriverConfig struct {
 
 type Driver interface {
 	Setup(conf *DriverConfig) error
-	CreateFile(f *File) error
-	CreateDir(dir *Directory) error
+	AddFile(f *File) error
+	AddDir(dir *Directory) error
 	Delete(path string) error
 }
 
