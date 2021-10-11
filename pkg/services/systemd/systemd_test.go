@@ -43,7 +43,7 @@ func (suite *SystemdIntegrationTestSuite) TestSystemd_Add_NotExists() {
 		Name:            service,
 		RestartOnChange: nil,
 	})
-	assert.Error(suite.T(), err, "service example doesn't exists")
+	assert.Error(suite.T(), err, "service `example` doesn't exists")
 }
 
 func (suite *SystemdIntegrationTestSuite) TestSystemd_Add() {
@@ -98,6 +98,36 @@ func (suite *SystemdIntegrationTestSuite) TestSystemd_Add_DisableService() {
 	err := sys.Add(&services.Service{
 		Name:            service,
 		Disabled:        true,
+		RestartOnChange: nil,
+	})
+
+	sh.AssertExpectationsInOrder(suite.T())
+
+	assert.NoError(suite.T(), err)
+}
+
+func (suite *SystemdIntegrationTestSuite) TestSystemd_Remove() {
+	service := "example"
+
+	sh := new(sysshell.Mock)
+	sh.
+		On("SafeExec", "/usr/bin/systemctl show example.service --no-pager | grep State").
+		Return([]string{
+			"LoadState=loaded",
+			"ActiveState=active",
+			"SubState=running",
+			"UnitFileState=enabled",
+		}, nil)
+	sh.
+		On("SafeExec", "/usr/bin/systemctl disable example.service").
+		Return([]string{}, nil)
+	sh.
+		On("SafeExec", "/usr/bin/systemctl stop example.service").
+		Return([]string{}, nil)
+
+	sys := systemd.New(&services.DriverConfig{}, sh)
+	err := sys.Remove(&services.Service{
+		Name:            service,
 		RestartOnChange: nil,
 	})
 
