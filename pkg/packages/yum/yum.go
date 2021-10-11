@@ -12,11 +12,11 @@ import (
 )
 
 type Yum struct {
-	conf *packages.DriverConfig
-	sh   sysshell.Shell
+	conf *packages.Config
+	sh   sysshell.Sysshell
 }
 
-func New(conf *packages.DriverConfig, sh sysshell.Shell) *Yum {
+func New(conf *packages.Config, sh sysshell.Sysshell) *Yum {
 	return &Yum{conf: conf, sh: sh}
 }
 
@@ -28,7 +28,7 @@ func (y *Yum) Setup(_ context.Context) error {
 	return nil
 }
 
-func (y *Yum) Init(ctx context.Context) error {
+func (y *Yum) Init(_ context.Context) error {
 	log.Infof("Init host")
 	if y.conf.DryRun {
 		return nil
@@ -113,7 +113,7 @@ func (y *Yum) Remove(ctx context.Context, name string) error {
 	return nil
 }
 
-func (y *Yum) installed(ctx context.Context, name string) (bool, error) {
+func (y *Yum) installed(_ context.Context, name string) (bool, error) {
 	res, err := y.sh.Exec(exec.Command("yum", "list", "installed", name, "--assumeyes"))
 	if err != nil {
 		return false, fmt.Errorf("can't exec yum: %w", err)

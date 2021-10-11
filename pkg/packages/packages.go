@@ -4,13 +4,13 @@ import (
 	"context"
 )
 
-type Driver interface {
-	Setup(ctx context.Context, c *DriverConfig) error
-	Init(ctx context.Context, c *DriverConfig) error
+type Packages interface {
+	Setup(ctx context.Context, c *Config) error
+	Init(ctx context.Context, c *Config) error
 	Add(ctx context.Context, name string) error
 	Remove(ctx context.Context, name string) error
 }
 
-type DriverConfig struct {
+type Config struct {
 	DryRun bool
 }

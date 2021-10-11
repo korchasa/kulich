@@ -5,7 +5,7 @@ import (
 	"os/exec"
 )
 
-type Shell interface {
+type Sysshell interface {
 	Exec(cmd *exec.Cmd) (*Result, error)
 	SafeExec(command string) ([]string, error)
 }

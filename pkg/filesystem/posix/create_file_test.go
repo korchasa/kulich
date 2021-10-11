@@ -19,7 +19,7 @@ func (suite *FsIntegrationTestSuite) TestCreateFile_FromLocalFile() {
 	err := os.WriteFile(src, expectedContent, 0o600)
 	assert.NoError(t, err)
 
-	pfs := posix.NewPosix(&filesystem.DriverConfig{})
+	pfs := posix.NewPosix(&filesystem.Config{})
 	actualHash, err := pfs.AddFile(&filesystem.File{
 		Path:        dst,
 		From:        src,
@@ -51,7 +51,7 @@ func (suite *FsIntegrationTestSuite) TestCreateFile_ReplaceOldFile() {
 	assert.NoError(t, err)
 	time.Sleep(10 * time.Millisecond)
 
-	pfs := posix.NewPosix(&filesystem.DriverConfig{})
+	pfs := posix.NewPosix(&filesystem.Config{})
 	actualHash, err := pfs.AddFile(&filesystem.File{
 		Path:        dst,
 		From:        src,
@@ -85,7 +85,7 @@ func (suite *FsIntegrationTestSuite) TestCreateFile_SuchFileExists() {
 	assert.NoError(t, err)
 	time.Sleep(10 * time.Millisecond)
 
-	pfs := posix.NewPosix(&filesystem.DriverConfig{})
+	pfs := posix.NewPosix(&filesystem.Config{})
 	actualHash, err := pfs.AddFile(&filesystem.File{
 		Path:        dst,
 		From:        src,
@@ -112,7 +112,7 @@ func (suite *FsIntegrationTestSuite) TestCreateFile_FromUri() {
 	expectedHash := "9d4489776118489c010b49e8001fa93eb94842f99f51f488b44c361a7b007d99"
 	dst := t.TempDir() + "/test_from_uri.zip"
 
-	pfs := posix.NewPosix(&filesystem.DriverConfig{})
+	pfs := posix.NewPosix(&filesystem.Config{})
 	actualHash, err := pfs.AddFile(&filesystem.File{
 		Path:        dst,
 		From:        src,
@@ -140,7 +140,7 @@ func (suite *FsIntegrationTestSuite) TestCreateFile_FromTemplate() {
 
 	err := os.WriteFile(src, srcContent, 0o600)
 	assert.NoError(t, err)
-	pfs := posix.NewPosix(&filesystem.DriverConfig{})
+	pfs := posix.NewPosix(&filesystem.Config{})
 
 	actualHash, err := pfs.AddFile(&filesystem.File{
 		Path:        dst,

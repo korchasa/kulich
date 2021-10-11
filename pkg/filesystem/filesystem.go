@@ -6,14 +6,14 @@ import (
 	"strings"
 )
 
-type DriverConfig struct {
+type Config struct {
 	Driver  string
 	TempDir string
 	DryRun  bool
 }
 
-type Driver interface {
-	Setup(conf *DriverConfig) error
+type Filesystem interface {
+	Setup(conf *Config) error
 	AddFile(f *File) error
 	AddDir(dir *Directory) error
 	Delete(path string) error

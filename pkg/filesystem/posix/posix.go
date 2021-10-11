@@ -7,14 +7,14 @@ import (
 )
 
 type Posix struct {
-	conf *filesystem.DriverConfig
+	conf *filesystem.Config
 }
 
-func NewPosix(conf *filesystem.DriverConfig) *Posix {
+func NewPosix(conf *filesystem.Config) *Posix {
 	return &Posix{conf: conf}
 }
 
-func (fs *Posix) Setup(c *filesystem.DriverConfig) error {
+func (fs *Posix) Setup(c *filesystem.Config) error {
 	fs.conf = c
 	return nil
 }

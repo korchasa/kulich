@@ -38,26 +38,26 @@ func TestYumIntegrationTestSuite(t *testing.T) {
 
 func (suite *YumIntegrationTestSuite) TestYum_Init() {
 	sh := posix.New()
-	mng := yum.New(&packages.DriverConfig{}, sh)
+	mng := yum.New(&packages.Config{}, sh)
 	err := mng.Init(context.Background())
 	assert.NoError(suite.T(), err)
 }
 
 func (suite *YumIntegrationTestSuite) TestYum_RemovePackage() {
 	sh := posix.New()
-	mng := yum.New(&packages.DriverConfig{}, sh)
+	mng := yum.New(&packages.Config{}, sh)
 	assert.NoError(suite.T(), mng.Remove(context.Background(), "epel-release"))
 }
 
 func (suite *YumIntegrationTestSuite) TestYum_InstallPackage() {
 	sh := posix.New()
-	mng := yum.New(&packages.DriverConfig{}, sh)
+	mng := yum.New(&packages.Config{}, sh)
 	assert.NoError(suite.T(), mng.Add(context.Background(), "epel-release"))
 }
 
 func (suite *YumIntegrationTestSuite) TestYum_InstallPackage_Repeat() {
 	sh := posix.New()
-	mng := yum.New(&packages.DriverConfig{}, sh)
+	mng := yum.New(&packages.Config{}, sh)
 	assert.NoError(suite.T(), mng.Add(context.Background(), "epel-release"))
 	assert.NoError(suite.T(), mng.Add(context.Background(), "epel-release"))
 }

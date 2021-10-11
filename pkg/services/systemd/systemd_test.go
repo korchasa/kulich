@@ -29,7 +29,7 @@ func TestSystemdIntegrationTestSuite(t *testing.T) {
 func (suite *SystemdIntegrationTestSuite) TestSystemd_Add_NotExists() {
 	service := "example"
 	sh := new(sysshell.Mock)
-	sys := systemd.New(&services.DriverConfig{}, sh)
+	sys := systemd.New(&services.Config{}, sh)
 
 	sh.
 		On("SafeExec", "/usr/bin/systemctl show example.service --no-pager | grep State").
@@ -65,7 +65,7 @@ func (suite *SystemdIntegrationTestSuite) TestSystemd_Add() {
 		On("SafeExec", "/usr/bin/systemctl start example.service").
 		Return([]string{}, nil)
 
-	sys := systemd.New(&services.DriverConfig{}, sh)
+	sys := systemd.New(&services.Config{}, sh)
 	err := sys.Add(&services.Service{
 		Name:            service,
 		RestartOnChange: nil,
@@ -94,7 +94,7 @@ func (suite *SystemdIntegrationTestSuite) TestSystemd_Add_DisableService() {
 		On("SafeExec", "/usr/bin/systemctl stop example.service").
 		Return([]string{}, nil)
 
-	sys := systemd.New(&services.DriverConfig{}, sh)
+	sys := systemd.New(&services.Config{}, sh)
 	err := sys.Add(&services.Service{
 		Name:            service,
 		Disabled:        true,
@@ -125,7 +125,7 @@ func (suite *SystemdIntegrationTestSuite) TestSystemd_Remove() {
 		On("SafeExec", "/usr/bin/systemctl stop example.service").
 		Return([]string{}, nil)
 
-	sys := systemd.New(&services.DriverConfig{}, sh)
+	sys := systemd.New(&services.Config{}, sh)
 	err := sys.Remove(&services.Service{
 		Name:            service,
 		RestartOnChange: nil,

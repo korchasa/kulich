@@ -2,8 +2,8 @@ package os
 
 import "time"
 
-type Driver interface {
-	Setup(c *DriverConfig) error
+type Os interface {
+	Setup(c *Config) error
 }
 
 type User struct {
@@ -12,7 +12,7 @@ type User struct {
 	Home  string
 }
 
-type DriverConfig struct {
+type Config struct {
 	Hostname string
 	Selinux  string
 	Timezone time.Location

@@ -1,6 +1,6 @@
 package services
 
-type Driver interface {
+type Services interface {
 	Add(s *Service) error
 	Remove(s *Service) error
 }
@@ -16,6 +16,6 @@ type Watcher struct {
 	Hash string
 }
 
-type DriverConfig struct {
+type Config struct {
 	DryRun bool
 }

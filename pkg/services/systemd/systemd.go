@@ -20,15 +20,15 @@ const (
 	inactive     activeState = "inactive"
 	running      subState    = "running"
 	dead         subState    = "dead"
-	failed       subState    = "failed"
+	// failed       subState    = "failed"
 )
 
 type Systemd struct {
-	conf *services.DriverConfig
-	sh   sysshell.Shell
+	conf *services.Config
+	sh   sysshell.Sysshell
 }
 
-func New(conf *services.DriverConfig, sh sysshell.Shell) *Systemd {
+func New(conf *services.Config, sh sysshell.Sysshell) *Systemd {
 	return &Systemd{conf: conf, sh: sh}
 }
 
