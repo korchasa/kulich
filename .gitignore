@@ -16,4 +16,4 @@
 
 sync.sh
 setup-dev-env.sh
-
+vendor/
