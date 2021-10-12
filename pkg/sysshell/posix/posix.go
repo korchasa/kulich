@@ -37,7 +37,7 @@ func (p *Posix) Exec(cmd *exec.Cmd) (*sysshell.Result, error) {
 		}
 	}
 
-	outStr, errStr := stdout.String(), stdout.String()
+	outStr, errStr := stdout.String(), stderr.String()
 	res.Stdout = strings.Split(outStr, "\n")
 	res.Stderr = strings.Split(errStr, "\n")
 
@@ -46,36 +46,40 @@ func (p *Posix) Exec(cmd *exec.Cmd) (*sysshell.Result, error) {
 		Result:  res,
 	})
 
-	log.Debugf(`Shell exec complete with code "%d"\n
-### stdout ##################\n
-%s\n
-### stderr ##################\n
-%s\n`, res.Exit, outStr, errStr)
+	log.Debugf(
+		`Shell exec complete with code "%d"
+### stdout ##################
+%s
+### stderr ##################
+%s
+#############################`,
+		res.Exit,
+		stdout.String(),
+		stderr.String())
 	return res, nil
 }
 
 func (p *Posix) SafeExec(command string) ([]string, error) {
 	parts := strings.Split(command, " ")
-	res, err := p.Exec(&exec.Cmd{
-		Path:         parts[0],
-		Args:         parts,
-		Env:          nil,
-		Dir:          "",
-		Stdin:        nil,
-		Stdout:       nil,
-		Stderr:       nil,
-		ExtraFiles:   nil,
-		SysProcAttr:  nil,
-		Process:      nil,
-		ProcessState: nil,
-	})
+	cmd := exec.Command(parts[0], parts[1:]...)
+	res, err := p.Exec(cmd)
 	if err != nil {
-		return res.Stdout, err
+		return []string{}, err
 	}
 	if res.Exit != 0 {
-		return res.Stdout, fmt.Errorf("non-zero exit code (%d) from %s: %s", res.Exit, parts[0], strings.Join(res.Stderr, "\n"))
+		return res.Stdout,
+			fmt.Errorf(
+				"non-zero exit code (%d) from `%s`:\nstdout: %s\nstderr: %s",
+				res.Exit,
+				cmd.Path,
+				strings.Join(res.Stdout, "\n"),
+				strings.Join(res.Stderr, "\n"))
 	}
 	return res.Stdout, nil
+}
+
+func (p *Posix) SafeExecf(command string, args ...interface{}) ([]string, error) {
+	return p.SafeExec(fmt.Sprintf(command, args...))
 }
 
 type HistoryExec struct {

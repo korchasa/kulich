@@ -1,17 +1,20 @@
 package firewall
 
-type Driver interface {
-	Setup(c *DriverConfig) error
-	ApplyRule(f *Rule) error
-	RemoveRule(f *Rule) error
+type Firewall interface {
+	Setup(c *Config) error
+	Add(r *Rule) error
+	Remove(r *Rule) error
 }
 
 type Rule struct {
-	Port    int
-	Sources []string
-	Output  bool
+	Identifier string
+	Ports      []string
+	Protocol   string
+	Targets    []string
+	IsOutput   bool
 }
 
-type DriverConfig struct {
-	Driver string
+const DefaultProtocol = "tcp"
+
+type Config struct {
 }

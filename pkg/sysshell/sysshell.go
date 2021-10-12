@@ -1,6 +1,7 @@
 package sysshell
 
 import (
+	"fmt"
 	"github.com/stretchr/testify/mock"
 	"os/exec"
 )
@@ -8,6 +9,7 @@ import (
 type Sysshell interface {
 	Exec(cmd *exec.Cmd) (*Result, error)
 	SafeExec(command string) ([]string, error)
+	SafeExecf(command string, args ...interface{}) ([]string, error)
 }
 
 type Result struct {
@@ -28,4 +30,8 @@ func (m *Mock) Exec(cmd *exec.Cmd) (*Result, error) {
 func (m *Mock) SafeExec(command string) ([]string, error) {
 	as := m.Called(command)
 	return as.Get(0).([]string), as.Error(1)
+}
+
+func (m *Mock) SafeExecf(command string, args ...interface{}) ([]string, error) {
+	return m.SafeExec(fmt.Sprintf(command, args...))
 }
