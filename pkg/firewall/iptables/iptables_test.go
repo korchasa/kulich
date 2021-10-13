@@ -26,7 +26,7 @@ func TestSystemdIntegrationTestSuite(t *testing.T) {
 	suite.Run(t, new(IptablesTestSuite))
 }
 
-func (suite *IptablesTestSuite) TestSystemd_Add_NotExists() {
+func (suite *IptablesTestSuite) TestSystemd_Add() {
 	sh := new(sysshell.Mock)
 	ipt := iptables.New(&firewall.Config{}, sh)
 
@@ -40,6 +40,21 @@ func (suite *IptablesTestSuite) TestSystemd_Add_NotExists() {
 	err := ipt.Add(&firewall.Rule{
 		Ports:   []string{"2222", "1000:2000"},
 		Targets: []string{"192.168.0.1", "192.168.100.1/24"},
+	})
+	assert.NoError(suite.T(), err)
+	sh.AssertExpectationsInOrder(suite.T())
+}
+
+func (suite *IptablesTestSuite) TestSystemd_Remove() {
+	sh := new(sysshell.Mock)
+	ipt := iptables.New(&firewall.Config{}, sh)
+
+	expectSafeExec(sh, `iptables --delete INPUT --protocol tcp --dport 2222 --src 192.168.100.1/24 -m comment --comment "9e4244a6" -j ACCEPT`)
+	expectSafeExec(sh, `iptables --delete INPUT --protocol tcp --dport 2222 -m comment --comment "a9cdce76" -j DROP`)
+
+	err := ipt.Remove(&firewall.Rule{
+		Ports:   []string{"2222"},
+		Targets: []string{"192.168.100.1/24"},
 	})
 	assert.NoError(suite.T(), err)
 	sh.AssertExpectationsInOrder(suite.T())
