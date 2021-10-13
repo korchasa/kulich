@@ -20,16 +20,12 @@ func New(conf *packages.Config, sh sysshell.Sysshell) *Yum {
 	return &Yum{conf: conf, sh: sh}
 }
 
-func (y *Yum) Setup(_ context.Context) error {
-	log.Infof("Setup host")
-	if y.conf.DryRun {
-		return nil
-	}
+func (y *Yum) FirstRun() error {
 	return nil
 }
 
-func (y *Yum) Init(_ context.Context) error {
-	log.Infof("Init host")
+func (y *Yum) BeforeRun() error {
+	log.Infof("Yum init")
 	if y.conf.DryRun {
 		return nil
 	}
@@ -43,14 +39,18 @@ func (y *Yum) Init(_ context.Context) error {
 	return nil
 }
 
-func (y *Yum) Add(ctx context.Context, name string) error {
+func (y *Yum) AfterRun() error {
+	return nil
+}
+
+func (y *Yum) Add(name string) error {
 	log.Infof("Install package `%s`", name)
 	if y.conf.DryRun {
 		return nil
 	}
 
 	s := sectionStart("Check package already installed")
-	installed, err := y.installed(ctx, name)
+	installed, err := y.installed(context.TODO(), name)
 	if err != nil {
 		return fmt.Errorf("can't check package installed or not: %w", err)
 	}
@@ -71,30 +71,13 @@ func (y *Yum) Add(ctx context.Context, name string) error {
 	return nil
 }
 
-type Section struct {
-	Name  string
-	Start time.Time
-}
-
-func sectionStart(n string) *Section {
-	log.Debugf("%s...", n)
-	return &Section{
-		Name:  n,
-		Start: time.Now(),
-	}
-}
-
-func sectionEnd(s *Section) {
-	log.Debugf("%s...DONE (%.2fs)", s.Name, time.Since(s.Start).Seconds())
-}
-
-func (y *Yum) Remove(ctx context.Context, name string) error {
+func (y *Yum) Remove(name string) error {
 	log.Infof("Remove package `%s`", name)
 	if y.conf.DryRun {
 		return nil
 	}
 
-	installed, err := y.installed(ctx, name)
+	installed, err := y.installed(context.TODO(), name)
 	if err != nil {
 		return fmt.Errorf("can't check package installed or not: %w", err)
 	}
@@ -111,6 +94,23 @@ func (y *Yum) Remove(ctx context.Context, name string) error {
 		return fmt.Errorf("`%s` package remove exit with non-zero code `%d`: %s", name, res.Exit, res.Stderr)
 	}
 	return nil
+}
+
+type Section struct {
+	Name  string
+	Start time.Time
+}
+
+func sectionStart(n string) *Section {
+	log.Debugf("%s...", n)
+	return &Section{
+		Name:  n,
+		Start: time.Now(),
+	}
+}
+
+func sectionEnd(s *Section) {
+	log.Debugf("%s...DONE (%.2fs)", s.Name, time.Since(s.Start).Seconds())
 }
 
 func (y *Yum) installed(_ context.Context, name string) (bool, error) {

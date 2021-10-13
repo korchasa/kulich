@@ -14,8 +14,15 @@ func NewPosix(conf *filesystem.Config) *Posix {
 	return &Posix{conf: conf}
 }
 
-func (fs *Posix) Setup(c *filesystem.Config) error {
-	fs.conf = c
+func (fs *Posix) FirstRun() error {
+	return nil
+}
+
+func (fs *Posix) BeforeRun() error {
+	return nil
+}
+
+func (fs *Posix) AfterRun() error {
 	return nil
 }
 

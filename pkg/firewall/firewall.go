@@ -1,9 +1,11 @@
 package firewall
 
 type Firewall interface {
-	Setup(c *Config) error
+	FirstRun() error
+	BeforeRun() error
 	Add(r *Rule) error
 	Remove(r *Rule) error
+	AfterRun() error
 }
 
 type Rule struct {

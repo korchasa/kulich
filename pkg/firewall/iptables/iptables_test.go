@@ -26,6 +26,10 @@ func TestSystemdIntegrationTestSuite(t *testing.T) {
 	suite.Run(t, new(IptablesTestSuite))
 }
 
+func (suite *IptablesTestSuite) TestImplementInterface() {
+	var _ firewall.Firewall = (*iptables.Iptables)(nil)
+}
+
 func (suite *IptablesTestSuite) TestSystemd_Add() {
 	sh := new(sysshell.Mock)
 	ipt := iptables.New(&firewall.Config{}, sh)

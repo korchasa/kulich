@@ -1,8 +1,11 @@
 package services
 
 type Services interface {
+	FirstRun() error
+	BeforeRun() error
 	Add(s *Service) error
 	Remove(s *Service) error
+	AfterRun() error
 }
 
 type Service struct {

@@ -26,6 +26,10 @@ func TestSystemdTestSuite(t *testing.T) {
 	suite.Run(t, new(SystemdTestSuite))
 }
 
+func (suite *SystemdTestSuite) TestImplementInterface() {
+	var _ services.Services = (*systemd.Systemd)(nil)
+}
+
 func (suite *SystemdTestSuite) TestSystemd_Add_NotExists() {
 	service := "example"
 	sh := new(sysshell.Mock)

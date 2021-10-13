@@ -13,10 +13,13 @@ type Config struct {
 }
 
 type Filesystem interface {
-	Setup(conf *Config) error
+	FirstRun() error
+	BeforeRun() error
 	AddFile(f *File) error
+	RemoveFile(f *File) error
 	AddDir(dir *Directory) error
-	Delete(path string) error
+	RemoveDir(dir *Directory) error
+	AfterRun() error
 }
 
 type File struct {

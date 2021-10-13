@@ -3,119 +3,81 @@ package posix
 import (
 	"crypto/sha256"
 	"fmt"
+	"github.com/korchasa/ruchki/pkg/filesystem"
+	log "github.com/sirupsen/logrus"
 	"io/ioutil"
 	"net/url"
 	"os"
 	"os/user"
 	"strconv"
-	"syscall"
-
-	"github.com/korchasa/ruchki/pkg/filesystem"
-	log "github.com/sirupsen/logrus"
 )
 
-func (fs *Posix) AddFile(s *filesystem.File) (string, error) {
-	log.Infof("Apply file %s", s.String())
+func (fs *Posix) AddFile(f *filesystem.File) error {
+	log.Infof("Apply file %s", f.String())
 	if fs.conf.DryRun {
-		return "", nil
+		return nil
 	}
 
 	log.Debug("Lookup users")
-	uid, gid, err := lookupUsers(s.User, s.Group)
+	uid, gid, err := lookupUsers(f.User, f.Group)
 	if err != nil {
-		return "", fmt.Errorf("can't lookup user and group: %w", err)
+		return fmt.Errorf("can't lookup user and group: %w", err)
 	}
 
-	tmpFilePath, err := fs.prepareTmpFile(s, uid, gid)
+	tmpFilePath, err := fs.prepareTmpFile(f, uid, gid)
 	if err != nil {
-		return "", err
+		return err
 	}
 
-	dstExists, err := fileExists(s.Path)
+	dstExists, err := fileExists(f.Path)
 	if err != nil {
-		return "", fmt.Errorf("can't check destination file exists: %w", err)
+		return fmt.Errorf("can't check destination file exists: %w", err)
 	}
 
 	log.Debugf("Calculate new file hash")
 	newHash, err := calcHash(tmpFilePath)
 	if err != nil {
-		return "", fmt.Errorf("can't calculate new file hash: %w", err)
+		return fmt.Errorf("can't calculate new file hash: %w", err)
 	}
+	f.Hash = newHash
 	if dstExists {
-		oldHash, err := calcHash(s.Path)
+		oldHash, err := calcHash(f.Path)
 		if err != nil {
-			return "", fmt.Errorf("can't calculate old file hash: %w", err)
+			return fmt.Errorf("can't calculate old file hash: %w", err)
 		}
 		if newHash == oldHash {
 			log.Info("A similar file already exists")
 			_ = os.Remove(tmpFilePath)
-			return oldHash, nil
+			return nil
 		}
 	}
 
 	if dstExists {
-		dstBackupPath := fmt.Sprintf("%s.backup", s.Path)
+		dstBackupPath := fmt.Sprintf("%s.backup", f.Path)
 		_ = os.Remove(dstBackupPath)
-		if err := os.Rename(s.Path, dstBackupPath); err != nil {
-			return "", fmt.Errorf("can't backup destination file: %w", err)
+		if err := os.Rename(f.Path, dstBackupPath); err != nil {
+			return fmt.Errorf("can't backup destination file: %w", err)
 		}
 	}
 
-	log.Debugf("Rename new version from `%s` to `%s`", tmpFilePath, s.Path)
-	if err := os.Rename(tmpFilePath, s.Path); err != nil {
-		return "", fmt.Errorf("can't save file to destination: %w", err)
+	log.Debugf("Rename new version from `%s` to `%s`", tmpFilePath, f.Path)
+	if err := os.Rename(tmpFilePath, f.Path); err != nil {
+		return fmt.Errorf("can't save file to destination: %w", err)
 	}
 
-	return newHash, nil
+	return nil
 }
 
-func oldFileInfo(s string) (result *filesystem.File, err error) {
-	exists, err := fileExists(s)
-	if err != nil {
-		return nil, fmt.Errorf("can't check file exists or not")
-	}
-	if !exists {
-		return result, nil
-	}
-	result.Path = s
-
-	result.Hash, err = calcHash(s)
-	if err != nil {
-		return nil, fmt.Errorf("can't calculate sha256: %w", err)
-	}
-
-	info, err := os.Stat(s)
-	if err != nil {
-		return nil, fmt.Errorf("can't stat file: %w", err)
-	}
-	result.Permissions = info.Mode()
-
-	if stat, ok := info.Sys().(*syscall.Stat_t); ok {
-		u, err := user.LookupId(fmt.Sprintf("%d", stat.Uid))
-		if err != nil {
-			return nil, fmt.Errorf("can't lookup user by id `%d`: %w", stat.Uid, err)
-		}
-		result.User = u.Name
-		g, err := user.LookupGroupId(fmt.Sprintf("%d", stat.Gid))
-		if err != nil {
-			return nil, fmt.Errorf("can't lookup group by id `%d`: %w", stat.Gid, err)
-		}
-		result.Group = g.Name
-	}
-
-	return result, nil
-}
-
-func (fs *Posix) prepareTmpFile(s *filesystem.File, uid int, gid int) (string, error) {
-	log.Debugf("Create temp file version for `%s`", s.Path)
-	fp, err := createTmpFile(s.Path)
+func (fs *Posix) prepareTmpFile(f *filesystem.File, uid int, gid int) (string, error) {
+	log.Debugf("Create temp file version for `%s`", f.Path)
+	fp, err := createTmpFile(f.Path)
 	if err != nil {
 		return "", fmt.Errorf("can't create temp file: %w", err)
 	}
 	defer func() { _ = fp.Close() }()
 	log.Debugf("Temp file `%s` created", fp.Name())
 
-	uri, _ := url.Parse(s.From)
+	uri, _ := url.Parse(f.From)
 	if uri.Scheme != "" {
 		log.Debugf("Download content from `%s`", uri.String())
 		nb, err := fs.download(fp, uri)
@@ -124,28 +86,28 @@ func (fs *Posix) prepareTmpFile(s *filesystem.File, uid int, gid int) (string, e
 		}
 		log.Debugf("File downloaded from `%s` (%d bytes)", uri, nb)
 	} else {
-		log.Debugf("Copy file content from `%s`", s.From)
-		nb, err := fs.copy(fp, s.From)
+		log.Debugf("Copy file content from `%s`", f.From)
+		nb, err := fs.copy(fp, f.From)
 		if err != nil {
-			return "", fmt.Errorf("can't copy file from `%s`: %w", s.From, err)
+			return "", fmt.Errorf("can't copy file from `%s`: %w", f.From, err)
 		}
-		log.Debugf("File copied from `%s` (%d bytes)", s.From, nb)
+		log.Debugf("File copied from `%s` (%d bytes)", f.From, nb)
 	}
 
-	if s.IsTemplate {
+	if f.IsTemplate {
 		log.Debugf("Render template")
-		err := fs.render(fp, s.TemplateVars)
+		err := fs.render(fp, f.TemplateVars)
 		if err != nil {
 			return "", fmt.Errorf("can't render template: %w", err)
 		}
 	}
 
-	log.Debugf("Change file permissions to %s", s.Permissions)
-	if err := fp.Chmod(s.Permissions); err != nil {
+	log.Debugf("Change file permissions to %s", f.Permissions)
+	if err := fp.Chmod(f.Permissions); err != nil {
 		return "", fmt.Errorf("can't change file permissions: %w", err)
 	}
 
-	log.Debugf("Change directory owner to %s(%d):%s:(%d)", s.User, uid, s.Group, gid)
+	log.Debugf("Change directory owner to %s(%d):%s:(%d)", f.User, uid, f.Group, gid)
 	if err := fp.Chown(uid, gid); err != nil {
 		return "", fmt.Errorf("can't change file permissions: %w", err)
 	}

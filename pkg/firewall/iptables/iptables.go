@@ -20,7 +20,15 @@ func New(conf *firewall.Config, sh sysshell.Sysshell) *Iptables {
 	return &Iptables{conf: conf, sh: sh}
 }
 
-func (i *Iptables) Init() error {
+func (i *Iptables) FirstRun() error {
+	return nil
+}
+
+func (i *Iptables) BeforeRun() error {
+	return nil
+}
+
+func (i *Iptables) AfterRun() error {
 	return nil
 }
 

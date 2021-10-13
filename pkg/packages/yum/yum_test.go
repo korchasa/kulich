@@ -1,7 +1,6 @@
 package yum_test
 
 import (
-	"context"
 	"github.com/korchasa/ruchki/pkg/packages"
 	"github.com/korchasa/ruchki/pkg/packages/yum"
 	"github.com/korchasa/ruchki/pkg/sysshell"
@@ -28,6 +27,10 @@ func TestSystemdTestSuite(t *testing.T) {
 	suite.Run(t, new(YumTestSuite))
 }
 
+func (suite *YumTestSuite) TestImplementInterface() {
+	var _ packages.Packages = (*yum.Yum)(nil)
+}
+
 func (suite *YumTestSuite) TestSystemd_Add_Install() {
 	sh := new(sysshell.Mock)
 	ym := yum.New(&packages.Config{}, sh)
@@ -45,7 +48,7 @@ func (suite *YumTestSuite) TestSystemd_Add_Install() {
 		}).
 		Return(&sysshell.Result{Exit: 0}, nil)
 
-	err := ym.Add(context.TODO(), "example")
+	err := ym.Add("example")
 	assert.NoError(suite.T(), err)
 	sh.AssertExpectationsInOrder(suite.T())
 }
@@ -61,7 +64,7 @@ func (suite *YumTestSuite) TestSystemd_Add_AlreadyInstalled() {
 		}).
 		Return(&sysshell.Result{Exit: 0}, nil)
 
-	err := ym.Add(context.TODO(), "example")
+	err := ym.Add("example")
 	assert.NoError(suite.T(), err)
 	sh.AssertExpectationsInOrder(suite.T())
 }
@@ -83,7 +86,7 @@ func (suite *YumTestSuite) TestSystemd_Remove() {
 		}).
 		Return(&sysshell.Result{Exit: 0}, nil)
 
-	err := ym.Remove(context.TODO(), "example")
+	err := ym.Remove("example")
 	assert.NoError(suite.T(), err)
 	sh.AssertExpectationsInOrder(suite.T())
 }

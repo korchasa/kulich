@@ -32,6 +32,18 @@ func New(conf *services.Config, sh sysshell.Sysshell) *Systemd {
 	return &Systemd{conf: conf, sh: sh}
 }
 
+func (sys *Systemd) FirstRun() error {
+	return nil
+}
+
+func (sys *Systemd) BeforeRun() error {
+	return nil
+}
+
+func (sys *Systemd) AfterRun() error {
+	return nil
+}
+
 func (sys *Systemd) Add(s *services.Service) error {
 	loadState, unitState, activeState, subState, err := sys.serviceState(s.Name)
 	if err != nil {

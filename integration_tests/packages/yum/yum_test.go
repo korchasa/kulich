@@ -1,7 +1,6 @@
 package yum_test
 
 import (
-	"context"
 	"github.com/korchasa/ruchki/pkg/packages/yum"
 	"github.com/stretchr/testify/suite"
 	"testing"
@@ -36,28 +35,28 @@ func TestYumIntegrationTestSuite(t *testing.T) {
 	suite.Run(t, new(YumIntegrationTestSuite))
 }
 
-func (suite *YumIntegrationTestSuite) TestYum_Init() {
+func (suite *YumIntegrationTestSuite) TestYum_BeforeRun() {
 	sh := posix.New()
 	mng := yum.New(&packages.Config{}, sh)
-	err := mng.Init(context.Background())
+	err := mng.BeforeRun()
 	assert.NoError(suite.T(), err)
 }
 
 func (suite *YumIntegrationTestSuite) TestYum_RemovePackage() {
 	sh := posix.New()
 	mng := yum.New(&packages.Config{}, sh)
-	assert.NoError(suite.T(), mng.Remove(context.Background(), "epel-release"))
+	assert.NoError(suite.T(), mng.Remove("epel-release"))
 }
 
 func (suite *YumIntegrationTestSuite) TestYum_InstallPackage() {
 	sh := posix.New()
 	mng := yum.New(&packages.Config{}, sh)
-	assert.NoError(suite.T(), mng.Add(context.Background(), "epel-release"))
+	assert.NoError(suite.T(), mng.Add("epel-release"))
 }
 
 func (suite *YumIntegrationTestSuite) TestYum_InstallPackage_Repeat() {
 	sh := posix.New()
 	mng := yum.New(&packages.Config{}, sh)
-	assert.NoError(suite.T(), mng.Add(context.Background(), "epel-release"))
-	assert.NoError(suite.T(), mng.Add(context.Background(), "epel-release"))
+	assert.NoError(suite.T(), mng.Add("epel-release"))
+	assert.NoError(suite.T(), mng.Add("epel-release"))
 }
