@@ -37,13 +37,14 @@ func (i *Iptables) cmd(r *firewall.Rule, cmd string) error {
 	if protocol == "" {
 		protocol = firewall.DefaultProtocol
 	}
-	for _, target := range r.Targets {
-		if !validTarget(target) {
-			return fmt.Errorf("can't parse target `%s`", target)
+
+	for _, port := range r.Ports {
+		if !validPort(port) {
+			return fmt.Errorf("can't parse port or ports range `%s`", port)
 		}
-		for _, port := range r.Ports {
-			if !validPort(port) {
-				return fmt.Errorf("can't parse port or ports range `%s`", port)
+		for _, target := range r.Targets {
+			if !validTarget(target) {
+				return fmt.Errorf("can't parse target `%s`", target)
 			}
 			if !r.IsOutput {
 				if _, err := i.sh.SafeExecf(
@@ -56,15 +57,6 @@ func (i *Iptables) cmd(r *firewall.Rule, cmd string) error {
 				); err != nil {
 					return fmt.Errorf("can't %s accept target input rule: %w", cmd, err)
 				}
-				if _, err := i.sh.SafeExecf(
-					"iptables --%s INPUT --protocol %s --dport %s -m comment --comment \"%s\" -j DROP",
-					cmd,
-					protocol,
-					port,
-					identifier(r, target, port),
-				); err != nil {
-					return fmt.Errorf("can't %s drop input rule: %w", cmd, err)
-				}
 			} else {
 				if _, err := i.sh.SafeExecf(
 					"iptables --%s OUTPUT --protocol %s --dport %s --src %s -m comment --comment \"%s\" -j ACCEPT",
@@ -76,15 +68,32 @@ func (i *Iptables) cmd(r *firewall.Rule, cmd string) error {
 				); err != nil {
 					return fmt.Errorf("can't %s accept target output rule: %w", cmd, err)
 				}
-				if _, err := i.sh.SafeExecf(
-					"iptables --%s OUTPUT --protocol %s --dport %s -m comment --comment \"%s\" -j DROP",
-					cmd,
-					protocol,
-					port,
-					identifier(r, target, port),
-				); err != nil {
-					return fmt.Errorf("can't %s drop output rule: %w", cmd, err)
-				}
+			}
+		}
+	}
+	for _, port := range r.Ports {
+		if !validPort(port) {
+			return fmt.Errorf("can't parse port or ports range `%s`", port)
+		}
+		if !r.IsOutput {
+			if _, err := i.sh.SafeExecf(
+				"iptables --%s INPUT --protocol %s --dport %s -m comment --comment \"%s\" -j DROP",
+				cmd,
+				protocol,
+				port,
+				identifier(r, "", port),
+			); err != nil {
+				return fmt.Errorf("can't %s drop input rule: %w", cmd, err)
+			}
+		} else {
+			if _, err := i.sh.SafeExecf(
+				"iptables --%s OUTPUT --protocol %s --dport %s -m comment --comment \"%s\" -j DROP",
+				cmd,
+				protocol,
+				port,
+				identifier(r, "", port),
+			); err != nil {
+				return fmt.Errorf("can't %s drop output rule: %w", cmd, err)
 			}
 		}
 	}

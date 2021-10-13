@@ -10,11 +10,11 @@ import (
 	"testing"
 )
 
-type SystemdIntegrationTestSuite struct {
+type SystemdTestSuite struct {
 	suite.Suite
 }
 
-func (suite *SystemdIntegrationTestSuite) SetupTest() {
+func (suite *SystemdTestSuite) SetupTest() {
 	// log.SetLevel(log.DebugLevel)
 	log.SetFormatter(&log.TextFormatter{
 		ForceColors:  true,
@@ -22,11 +22,11 @@ func (suite *SystemdIntegrationTestSuite) SetupTest() {
 	})
 }
 
-func TestSystemdIntegrationTestSuite(t *testing.T) {
-	suite.Run(t, new(SystemdIntegrationTestSuite))
+func TestSystemdTestSuite(t *testing.T) {
+	suite.Run(t, new(SystemdTestSuite))
 }
 
-func (suite *SystemdIntegrationTestSuite) TestSystemd_Add_NotExists() {
+func (suite *SystemdTestSuite) TestSystemd_Add_NotExists() {
 	service := "example"
 	sh := new(sysshell.Mock)
 	sys := systemd.New(&services.Config{}, sh)
@@ -46,7 +46,7 @@ func (suite *SystemdIntegrationTestSuite) TestSystemd_Add_NotExists() {
 	assert.Error(suite.T(), err, "service `example` doesn't exists")
 }
 
-func (suite *SystemdIntegrationTestSuite) TestSystemd_Add() {
+func (suite *SystemdTestSuite) TestSystemd_Add() {
 	service := "example"
 
 	sh := new(sysshell.Mock)
@@ -75,7 +75,7 @@ func (suite *SystemdIntegrationTestSuite) TestSystemd_Add() {
 	sh.AssertExpectationsInOrder(suite.T())
 }
 
-func (suite *SystemdIntegrationTestSuite) TestSystemd_Add_DisableService() {
+func (suite *SystemdTestSuite) TestSystemd_Add_DisableService() {
 	service := "example"
 
 	sh := new(sysshell.Mock)
@@ -106,7 +106,7 @@ func (suite *SystemdIntegrationTestSuite) TestSystemd_Add_DisableService() {
 	assert.NoError(suite.T(), err)
 }
 
-func (suite *SystemdIntegrationTestSuite) TestSystemd_Remove() {
+func (suite *SystemdTestSuite) TestSystemd_Remove() {
 	service := "example"
 
 	sh := new(sysshell.Mock)
