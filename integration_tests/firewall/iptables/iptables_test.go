@@ -29,14 +29,18 @@ func TestIptablesIntegrationTestSuite(t *testing.T) {
 
 func (suite *IptablesIntegrationTestSuite) TestAdd() {
 	sh := posix.New()
-	ipt := iptables.New(&firewall.Config{}, sh)
+	ipt := new(iptables.Iptables)
+	assert.NoError(suite.T(), ipt.Config(false, sh))
+
 	err := ipt.Add(&firewall.Rule{Ports: []string{"10001", "10100:10200"}, Targets: []string{"192.158.1.1", "192.158.1.0/24"}})
 	assert.NoError(suite.T(), err)
 }
 
 func (suite *IptablesIntegrationTestSuite) TestRemove() {
 	sh := posix.New()
-	ipt := iptables.New(&firewall.Config{}, sh)
+	ipt := new(iptables.Iptables)
+	assert.NoError(suite.T(), ipt.Config(false, sh))
+
 	err := ipt.Add(&firewall.Rule{Ports: []string{"20000", "20100:20200"}, Targets: []string{"192.158.2.1", "192.158.2.0/24"}})
 	assert.NoError(suite.T(), err)
 	err = ipt.Remove(&firewall.Rule{Ports: []string{"20000"}, Targets: []string{"192.158.2.1"}})

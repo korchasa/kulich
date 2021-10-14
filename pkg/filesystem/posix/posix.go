@@ -2,16 +2,27 @@ package posix
 
 import (
 	"fmt"
-	"github.com/korchasa/ruchki/pkg/filesystem"
+	"github.com/korchasa/ruchki/pkg/config"
 	"os"
 )
 
 type Posix struct {
-	conf *filesystem.Config
+	dryRun  bool
+	tempDir string
 }
 
-func NewPosix(conf *filesystem.Config) *Posix {
-	return &Posix{conf: conf}
+func (fs *Posix) Config(dryRun bool, opts ...*config.Option) error {
+	fs.dryRun = dryRun
+	for _, v := range opts {
+		switch v.Type {
+		case "temp_dir":
+			fs.tempDir = v.Value
+		default:
+			return fmt.Errorf("unsupported option type `%s`", v.Type)
+		}
+	}
+
+	return nil
 }
 
 func (fs *Posix) FirstRun() error {

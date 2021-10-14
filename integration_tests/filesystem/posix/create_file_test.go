@@ -26,7 +26,7 @@ func (suite *FsIntegrationTestSuite) TestCreateFile_FromLocalFile() {
 	err := os.WriteFile(src, expectedContent, 0o600)
 	assert.NoError(t, err)
 
-	pfs := posix.NewPosix(&filesystem.Config{})
+	pfs := new(posix.Posix)
 	err = pfs.AddFile(f)
 
 	assert.NoError(t, err)
@@ -60,7 +60,7 @@ func (suite *FsIntegrationTestSuite) TestCreateFile_ReplaceOldFile() {
 	assert.NoError(t, err)
 	time.Sleep(10 * time.Millisecond)
 
-	pfs := posix.NewPosix(&filesystem.Config{})
+	pfs := new(posix.Posix)
 	err = pfs.AddFile(f)
 
 	assert.NoError(t, err)
@@ -96,7 +96,7 @@ func (suite *FsIntegrationTestSuite) TestCreateFile_SuchFileExists() {
 	assert.NoError(t, err)
 	time.Sleep(10 * time.Millisecond)
 
-	pfs := posix.NewPosix(&filesystem.Config{})
+	pfs := new(posix.Posix)
 	err = pfs.AddFile(f)
 
 	assert.NoError(t, err)
@@ -125,7 +125,7 @@ func (suite *FsIntegrationTestSuite) TestCreateFile_FromUri() {
 		Permissions: 0o755,
 	}
 
-	pfs := posix.NewPosix(&filesystem.Config{})
+	pfs := new(posix.Posix)
 	err := pfs.AddFile(f)
 
 	assert.NoError(t, err)
@@ -159,7 +159,7 @@ func (suite *FsIntegrationTestSuite) TestCreateFile_FromTemplate() {
 
 	err := os.WriteFile(src, srcContent, 0o600)
 	assert.NoError(t, err)
-	pfs := posix.NewPosix(&filesystem.Config{})
+	pfs := new(posix.Posix)
 
 	err = pfs.AddFile(f)
 	assert.NoError(t, err)

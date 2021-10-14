@@ -4,6 +4,7 @@ import (
 	"crypto/md5"
 	"encoding/hex"
 	"fmt"
+	"github.com/korchasa/ruchki/pkg/config"
 	"github.com/korchasa/ruchki/pkg/firewall"
 	"github.com/korchasa/ruchki/pkg/sysshell"
 	"net"
@@ -12,12 +13,21 @@ import (
 )
 
 type Iptables struct {
-	conf *firewall.Config
-	sh   sysshell.Sysshell
+	sh     sysshell.Sysshell
+	dryRun bool
 }
 
-func New(conf *firewall.Config, sh sysshell.Sysshell) *Iptables {
-	return &Iptables{conf: conf, sh: sh}
+func (i *Iptables) Config(dryRun bool, sh sysshell.Sysshell, opts ...*config.Option) error {
+	i.sh = sh
+	i.dryRun = dryRun
+	for _, v := range opts {
+		switch v.Type {
+		default:
+			return fmt.Errorf("unsupported option type `%s`", v.Type)
+		}
+	}
+
+	return nil
 }
 
 func (i *Iptables) FirstRun() error {

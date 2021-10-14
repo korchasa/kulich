@@ -14,7 +14,7 @@ import (
 
 func (fs *Posix) AddFile(f *filesystem.File) error {
 	log.Infof("Apply file %s", f.String())
-	if fs.conf.DryRun {
+	if fs.dryRun {
 		return nil
 	}
 

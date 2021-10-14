@@ -2,17 +2,13 @@ package filesystem
 
 import (
 	"fmt"
+	"github.com/korchasa/ruchki/pkg/config"
 	"io/fs"
 	"strings"
 )
 
-type Config struct {
-	Driver  string
-	TempDir string
-	DryRun  bool
-}
-
 type Filesystem interface {
+	Config(dryRun bool, opts ...*config.Option) error
 	FirstRun() error
 	BeforeRun() error
 	AddFile(f *File) error

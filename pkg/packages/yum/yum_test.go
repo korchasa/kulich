@@ -33,7 +33,8 @@ func (suite *YumTestSuite) TestImplementInterface() {
 
 func (suite *YumTestSuite) TestSystemd_Add_Install() {
 	sh := new(sysshell.Mock)
-	ym := yum.New(&packages.Config{}, sh)
+	ym := new(yum.Yum)
+	assert.NoError(suite.T(), ym.Config(false, sh))
 
 	sh.
 		On("Exec", &exec.Cmd{
@@ -55,7 +56,8 @@ func (suite *YumTestSuite) TestSystemd_Add_Install() {
 
 func (suite *YumTestSuite) TestSystemd_Add_AlreadyInstalled() {
 	sh := new(sysshell.Mock)
-	ym := yum.New(&packages.Config{}, sh)
+	ym := new(yum.Yum)
+	assert.NoError(suite.T(), ym.Config(false, sh))
 
 	sh.
 		On("Exec", &exec.Cmd{
@@ -71,7 +73,8 @@ func (suite *YumTestSuite) TestSystemd_Add_AlreadyInstalled() {
 
 func (suite *YumTestSuite) TestSystemd_Remove() {
 	sh := new(sysshell.Mock)
-	ym := yum.New(&packages.Config{}, sh)
+	ym := new(yum.Yum)
+	assert.NoError(suite.T(), ym.Config(false, sh))
 
 	sh.
 		On("Exec", &exec.Cmd{

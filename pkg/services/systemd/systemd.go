@@ -2,6 +2,7 @@ package systemd
 
 import (
 	"fmt"
+	"github.com/korchasa/ruchki/pkg/config"
 	"github.com/korchasa/ruchki/pkg/services"
 	"github.com/korchasa/ruchki/pkg/sysshell"
 	"strings"
@@ -24,12 +25,21 @@ const (
 )
 
 type Systemd struct {
-	conf *services.Config
-	sh   sysshell.Sysshell
+	dryRun bool
+	sh     sysshell.Sysshell
 }
 
-func New(conf *services.Config, sh sysshell.Sysshell) *Systemd {
-	return &Systemd{conf: conf, sh: sh}
+func (sys *Systemd) Config(dryRun bool, sh sysshell.Sysshell, opts ...*config.Option) error {
+	sys.sh = sh
+	sys.dryRun = dryRun
+	for _, v := range opts {
+		switch v.Type {
+		default:
+			return fmt.Errorf("unsupported option type `%s`", v.Type)
+		}
+	}
+
+	return nil
 }
 
 func (sys *Systemd) FirstRun() error {

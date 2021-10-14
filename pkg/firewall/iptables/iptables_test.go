@@ -32,7 +32,8 @@ func (suite *IptablesTestSuite) TestImplementInterface() {
 
 func (suite *IptablesTestSuite) TestSystemd_Add() {
 	sh := new(sysshell.Mock)
-	ipt := iptables.New(&firewall.Config{}, sh)
+	ipt := new(iptables.Iptables)
+	assert.NoError(suite.T(), ipt.Config(false, sh))
 
 	expectSafeExec(sh, `iptables --append INPUT --protocol tcp --dport 2222 --src 192.168.0.1 -m comment --comment "2ff487a2" -j ACCEPT`)
 	expectSafeExec(sh, `iptables --append INPUT --protocol tcp --dport 2222 --src 192.168.100.1/24 -m comment --comment "9e4244a6" -j ACCEPT`)
@@ -51,7 +52,8 @@ func (suite *IptablesTestSuite) TestSystemd_Add() {
 
 func (suite *IptablesTestSuite) TestSystemd_Remove() {
 	sh := new(sysshell.Mock)
-	ipt := iptables.New(&firewall.Config{}, sh)
+	ipt := new(iptables.Iptables)
+	assert.NoError(suite.T(), ipt.Config(false, sh))
 
 	expectSafeExec(sh, `iptables --delete INPUT --protocol tcp --dport 2222 --src 192.168.100.1/24 -m comment --comment "9e4244a6" -j ACCEPT`)
 	expectSafeExec(sh, `iptables --delete INPUT --protocol tcp --dport 2222 -m comment --comment "a9cdce76" -j DROP`)

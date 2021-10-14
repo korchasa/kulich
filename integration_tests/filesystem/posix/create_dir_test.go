@@ -9,7 +9,7 @@ import (
 func (suite *FsIntegrationTestSuite) TestCreateDir() {
 	t := suite.T()
 	p := t.TempDir() + "/empty"
-	pfs := posix.NewPosix(&filesystem.Config{})
+	pfs := new(posix.Posix)
 	err := pfs.AddDir(&filesystem.Directory{
 		Path:        p,
 		User:        "nobody",

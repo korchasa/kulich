@@ -3,21 +3,30 @@ package yum
 import (
 	"context"
 	"fmt"
+	"github.com/korchasa/ruchki/pkg/config"
 	"os/exec"
 	"time"
 
-	"github.com/korchasa/ruchki/pkg/packages"
 	"github.com/korchasa/ruchki/pkg/sysshell"
 	log "github.com/sirupsen/logrus"
 )
 
 type Yum struct {
-	conf *packages.Config
-	sh   sysshell.Sysshell
+	sh     sysshell.Sysshell
+	dryRun bool
 }
 
-func New(conf *packages.Config, sh sysshell.Sysshell) *Yum {
-	return &Yum{conf: conf, sh: sh}
+func (y *Yum) Config(dryRun bool, sh sysshell.Sysshell, opts ...*config.Option) error {
+	y.sh = sh
+	y.dryRun = dryRun
+	for _, v := range opts {
+		switch v.Type {
+		default:
+			return fmt.Errorf("unsupported option type `%s`", v.Type)
+		}
+	}
+
+	return nil
 }
 
 func (y *Yum) FirstRun() error {
@@ -26,7 +35,7 @@ func (y *Yum) FirstRun() error {
 
 func (y *Yum) BeforeRun() error {
 	log.Infof("Yum init")
-	if y.conf.DryRun {
+	if y.dryRun {
 		return nil
 	}
 	res, err := y.sh.Exec(exec.Command("yum", "makecache", "fast"))
@@ -45,7 +54,7 @@ func (y *Yum) AfterRun() error {
 
 func (y *Yum) Add(name string) error {
 	log.Infof("Install package `%s`", name)
-	if y.conf.DryRun {
+	if y.dryRun {
 		return nil
 	}
 
@@ -73,7 +82,7 @@ func (y *Yum) Add(name string) error {
 
 func (y *Yum) Remove(name string) error {
 	log.Infof("Remove package `%s`", name)
-	if y.conf.DryRun {
+	if y.dryRun {
 		return nil
 	}
 
