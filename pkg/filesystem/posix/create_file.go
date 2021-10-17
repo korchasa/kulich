@@ -3,7 +3,7 @@ package posix
 import (
 	"crypto/sha256"
 	"fmt"
-	"github.com/korchasa/kulich/pkg/filesystem"
+	"github.com/korchasa/kulich/pkg/state"
 	log "github.com/sirupsen/logrus"
 	"io/ioutil"
 	"net/url"
@@ -12,7 +12,7 @@ import (
 	"strconv"
 )
 
-func (fs *Posix) AddFile(f *filesystem.File) error {
+func (fs *Posix) AddFile(f *state.File) error {
 	log.Infof("Apply file %s", f.String())
 	if fs.dryRun {
 		return nil
@@ -68,7 +68,7 @@ func (fs *Posix) AddFile(f *filesystem.File) error {
 	return nil
 }
 
-func (fs *Posix) prepareTmpFile(f *filesystem.File, uid int, gid int) (string, error) {
+func (fs *Posix) prepareTmpFile(f *state.File, uid int, gid int) (string, error) {
 	log.Debugf("Create temp file version for `%s`", f.Path)
 	fp, err := createTmpFile(f.Path)
 	if err != nil {

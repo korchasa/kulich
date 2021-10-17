@@ -3,7 +3,7 @@ package yum
 import (
 	"context"
 	"fmt"
-	"github.com/korchasa/kulich/pkg/config"
+	"github.com/korchasa/kulich/pkg/state"
 	"os/exec"
 	"time"
 
@@ -16,13 +16,13 @@ type Yum struct {
 	dryRun bool
 }
 
-func (y *Yum) Config(dryRun bool, sh sysshell.Sysshell, opts ...*config.Option) error {
+func (y *Yum) Config(dryRun bool, sh sysshell.Sysshell, opts ...*state.Option) error {
 	y.sh = sh
 	y.dryRun = dryRun
 	for _, v := range opts {
-		switch v.Type {
+		switch v.Name {
 		default:
-			return fmt.Errorf("unsupported option type `%s`", v.Type)
+			return fmt.Errorf("unsupported option type `%s`", v.Name)
 		}
 	}
 
@@ -52,55 +52,55 @@ func (y *Yum) AfterRun() error {
 	return nil
 }
 
-func (y *Yum) Add(name string) error {
-	log.Infof("Install package `%s`", name)
+func (y *Yum) Add(p *state.Package) error {
+	log.Infof("Install package `%s`", p.Name)
 	if y.dryRun {
 		return nil
 	}
 
 	s := sectionStart("Check package already installed")
-	installed, err := y.installed(context.TODO(), name)
+	installed, err := y.installed(context.TODO(), p.Name)
 	if err != nil {
 		return fmt.Errorf("can't check package installed or not: %w", err)
 	}
 	sectionEnd(s)
 	if installed {
-		log.Debugf("Package `%s` already installed", name)
+		log.Debugf("Package `%s` already installed", p.Name)
 		return nil
 	}
 
 	log.Debugf("Run package install")
-	res, err := y.sh.Exec(exec.Command("yum", "install", name, "--assumeyes"))
+	res, err := y.sh.Exec(exec.Command("yum", "install", p.Name, "--assumeyes"))
 	if err != nil {
-		return fmt.Errorf("can't install package `%s`: %w", name, err)
+		return fmt.Errorf("can't install package `%s`: %w", p.Name, err)
 	}
 	if res.Exit != 0 {
-		return fmt.Errorf("`%s` package install exit with non-zero code `%d`: %s", name, res.Exit, res.Stderr)
+		return fmt.Errorf("`%s` package install exit with non-zero code `%d`: %s", p.Name, res.Exit, res.Stderr)
 	}
 	return nil
 }
 
-func (y *Yum) Remove(name string) error {
-	log.Infof("Remove package `%s`", name)
+func (y *Yum) Remove(p *state.Package) error {
+	log.Infof("Remove package `%s`", p.Name)
 	if y.dryRun {
 		return nil
 	}
 
-	installed, err := y.installed(context.TODO(), name)
+	installed, err := y.installed(context.TODO(), p.Name)
 	if err != nil {
 		return fmt.Errorf("can't check package installed or not: %w", err)
 	}
 	if !installed {
-		log.Infof("Package `%s` not installed", name)
+		log.Infof("Package `%s` not installed", p.Name)
 		return nil
 	}
 
-	res, err := y.sh.Exec(exec.Command("yum", "remove", name, "--assumeyes"))
+	res, err := y.sh.Exec(exec.Command("yum", "remove", p.Name, "--assumeyes"))
 	if err != nil {
-		return fmt.Errorf("can't remove package `%s`: %w", name, err)
+		return fmt.Errorf("can't remove package `%s`: %w", p.Name, err)
 	}
 	if res.Exit != 0 {
-		return fmt.Errorf("`%s` package remove exit with non-zero code `%d`: %s", name, res.Exit, res.Stderr)
+		return fmt.Errorf("`%s` package remove exit with non-zero code `%d`: %s", p.Name, res.Exit, res.Stderr)
 	}
 	return nil
 }

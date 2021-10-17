@@ -2,7 +2,7 @@ package posix
 
 import (
 	"fmt"
-	"github.com/korchasa/kulich/pkg/config"
+	"github.com/korchasa/kulich/pkg/state"
 	"os"
 )
 
@@ -11,14 +11,14 @@ type Posix struct {
 	tempDir string
 }
 
-func (fs *Posix) Config(dryRun bool, opts ...*config.Option) error {
+func (fs *Posix) Config(dryRun bool, opts ...*state.Option) error {
 	fs.dryRun = dryRun
 	for _, v := range opts {
-		switch v.Type {
+		switch v.Name {
 		case "temp_dir":
 			fs.tempDir = v.Value
 		default:
-			return fmt.Errorf("unsupported option type `%s`", v.Type)
+			return fmt.Errorf("unsupported option type `%s`", v.Name)
 		}
 	}
 

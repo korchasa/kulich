@@ -2,12 +2,11 @@ package centos7
 
 import (
 	"fmt"
-	"github.com/korchasa/kulich/pkg/config"
 	"github.com/korchasa/kulich/pkg/filesystem"
 	"github.com/korchasa/kulich/pkg/firewall"
-	"github.com/korchasa/kulich/pkg/os"
 	"github.com/korchasa/kulich/pkg/packages"
 	"github.com/korchasa/kulich/pkg/services"
+	"github.com/korchasa/kulich/pkg/state"
 	"github.com/korchasa/kulich/pkg/sysshell"
 	"os/exec"
 	"strings"
@@ -18,13 +17,13 @@ type Centos7 struct {
 	sh     sysshell.Sysshell
 }
 
-func (c *Centos7) Config(dryRun bool, sh sysshell.Sysshell, opts ...*config.Option) error {
+func (c *Centos7) Config(dryRun bool, sh sysshell.Sysshell, opts ...*state.Option) error {
 	c.sh = sh
 	c.dryRun = dryRun
 	for _, v := range opts {
-		switch v.Type {
+		switch v.Name {
 		default:
-			return fmt.Errorf("unsupported option type `%s`", v.Type)
+			return fmt.Errorf("unsupported option type `%s`", v.Name)
 		}
 	}
 
@@ -39,7 +38,7 @@ func (c *Centos7) BeforeAll() error {
 	return nil
 }
 
-func (c *Centos7) AddUser(u *os.User) error {
+func (c *Centos7) AddUser(u *state.User) error {
 	res, err := c.sh.Exec(exec.Command("id", "-u", u.Name))
 	if err != nil {
 		return fmt.Errorf("can't check `%s` user exists: %w", u.Name, err)
@@ -62,7 +61,7 @@ func (c *Centos7) AddUser(u *os.User) error {
 	return nil
 }
 
-func (c *Centos7) RemoveUser(u *os.User) error {
+func (c *Centos7) RemoveUser(u *state.User) error {
 	res, err := c.sh.Exec(exec.Command("id", "-u", u.Name))
 	if err != nil {
 		return fmt.Errorf("can't check `%s` user exists: %w", u.Name, err)
@@ -77,7 +76,7 @@ func (c *Centos7) RemoveUser(u *os.User) error {
 	return nil
 }
 
-func (c *Centos7) SetOption(opt *config.Option) error {
+func (c *Centos7) SetOption(opt *state.Option) error {
 	panic("implement me")
 }
 

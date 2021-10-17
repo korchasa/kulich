@@ -1,40 +1,18 @@
 package yum_test
 
 import (
-	"github.com/korchasa/kulich/pkg/packages"
 	"github.com/korchasa/kulich/pkg/packages/yum"
+	"github.com/korchasa/kulich/pkg/state"
 	"github.com/korchasa/kulich/pkg/sysshell"
-	log "github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/suite"
 	"os/exec"
 	"testing"
 )
 
-type YumTestSuite struct {
-	suite.Suite
-}
-
-func (suite *YumTestSuite) SetupTest() {
-	// log.SetLevel(log.DebugLevel)
-	log.SetFormatter(&log.TextFormatter{
-		ForceColors:  true,
-		DisableQuote: true,
-	})
-}
-
-func TestSystemdTestSuite(t *testing.T) {
-	suite.Run(t, new(YumTestSuite))
-}
-
-func (suite *YumTestSuite) TestImplementInterface() {
-	var _ packages.Packages = (*yum.Yum)(nil)
-}
-
-func (suite *YumTestSuite) TestSystemd_Add_Install() {
+func TestSystemd_Add_Install(t *testing.T) {
 	sh := new(sysshell.Mock)
 	ym := new(yum.Yum)
-	assert.NoError(suite.T(), ym.Config(false, sh))
+	assert.NoError(t, ym.Config(false, sh))
 
 	sh.
 		On("Exec", &exec.Cmd{
@@ -49,15 +27,15 @@ func (suite *YumTestSuite) TestSystemd_Add_Install() {
 		}).
 		Return(&sysshell.Result{Exit: 0}, nil)
 
-	err := ym.Add("example")
-	assert.NoError(suite.T(), err)
-	sh.AssertExpectationsInOrder(suite.T())
+	err := ym.Add(&state.Package{Name: "example"})
+	assert.NoError(t, err)
+	sh.AssertExpectationsInOrder(t)
 }
 
-func (suite *YumTestSuite) TestSystemd_Add_AlreadyInstalled() {
+func TestSystemd_Add_AlreadyInstalled(t *testing.T) {
 	sh := new(sysshell.Mock)
 	ym := new(yum.Yum)
-	assert.NoError(suite.T(), ym.Config(false, sh))
+	assert.NoError(t, ym.Config(false, sh))
 
 	sh.
 		On("Exec", &exec.Cmd{
@@ -66,15 +44,15 @@ func (suite *YumTestSuite) TestSystemd_Add_AlreadyInstalled() {
 		}).
 		Return(&sysshell.Result{Exit: 0}, nil)
 
-	err := ym.Add("example")
-	assert.NoError(suite.T(), err)
-	sh.AssertExpectationsInOrder(suite.T())
+	err := ym.Add(&state.Package{Name: "example"})
+	assert.NoError(t, err)
+	sh.AssertExpectationsInOrder(t)
 }
 
-func (suite *YumTestSuite) TestSystemd_Remove() {
+func TestSystemd_Remove(t *testing.T) {
 	sh := new(sysshell.Mock)
 	ym := new(yum.Yum)
-	assert.NoError(suite.T(), ym.Config(false, sh))
+	assert.NoError(t, ym.Config(false, sh))
 
 	sh.
 		On("Exec", &exec.Cmd{
@@ -89,7 +67,7 @@ func (suite *YumTestSuite) TestSystemd_Remove() {
 		}).
 		Return(&sysshell.Result{Exit: 0}, nil)
 
-	err := ym.Remove("example")
-	assert.NoError(suite.T(), err)
-	sh.AssertExpectationsInOrder(suite.T())
+	err := ym.Remove(&state.Package{Name: "example"})
+	assert.NoError(t, err)
+	sh.AssertExpectationsInOrder(t)
 }

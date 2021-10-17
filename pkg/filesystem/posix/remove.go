@@ -1,14 +1,14 @@
 package posix
 
 import (
-	"github.com/korchasa/kulich/pkg/filesystem"
+	"github.com/korchasa/kulich/pkg/state"
 	"os"
 )
 
-func (fs *Posix) RemoveFile(f *filesystem.File) error {
+func (fs *Posix) RemoveFile(f *state.File) error {
 	return os.RemoveAll(f.Path)
 }
 
-func (fs *Posix) RemoveDir(d *filesystem.Directory) error {
+func (fs *Posix) RemoveDir(d *state.Directory) error {
 	return os.RemoveAll(d.Path)
 }

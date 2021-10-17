@@ -1,8 +1,8 @@
 package posix_test
 
 import (
-	"github.com/korchasa/kulich/pkg/filesystem"
 	"github.com/korchasa/kulich/pkg/filesystem/posix"
+	"github.com/korchasa/kulich/pkg/state"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -10,7 +10,7 @@ func (suite *FsIntegrationTestSuite) TestCreateDir() {
 	t := suite.T()
 	p := t.TempDir() + "/empty"
 	pfs := new(posix.Posix)
-	err := pfs.AddDir(&filesystem.Directory{
+	err := pfs.AddDir(&state.Directory{
 		Path:        p,
 		User:        "nobody",
 		Group:       "nobody",

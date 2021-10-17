@@ -2,6 +2,7 @@ package yum_test
 
 import (
 	"github.com/korchasa/kulich/pkg/packages/yum"
+	"github.com/korchasa/kulich/pkg/state"
 	"github.com/stretchr/testify/suite"
 	"testing"
 
@@ -46,20 +47,20 @@ func (suite *YumIntegrationTestSuite) TestYum_RemovePackage() {
 	sh := posix.New()
 	mng := new(yum.Yum)
 	assert.NoError(suite.T(), mng.Config(false, sh))
-	assert.NoError(suite.T(), mng.Remove("epel-release"))
+	assert.NoError(suite.T(), mng.Remove(&state.Package{Name: "epel-release"}))
 }
 
 func (suite *YumIntegrationTestSuite) TestYum_InstallPackage() {
 	sh := posix.New()
 	mng := new(yum.Yum)
 	assert.NoError(suite.T(), mng.Config(false, sh))
-	assert.NoError(suite.T(), mng.Add("epel-release"))
+	assert.NoError(suite.T(), mng.Add(&state.Package{Name: "epel-release"}))
 }
 
 func (suite *YumIntegrationTestSuite) TestYum_InstallPackage_Repeat() {
 	sh := posix.New()
 	mng := new(yum.Yum)
 	assert.NoError(suite.T(), mng.Config(false, sh))
-	assert.NoError(suite.T(), mng.Add("epel-release"))
-	assert.NoError(suite.T(), mng.Add("epel-release"))
+	assert.NoError(suite.T(), mng.Add(&state.Package{Name: "epel-release"}))
+	assert.NoError(suite.T(), mng.Add(&state.Package{Name: "epel-release"}))
 }

@@ -4,8 +4,7 @@ import (
 	"crypto/md5"
 	"encoding/hex"
 	"fmt"
-	"github.com/korchasa/kulich/pkg/config"
-	"github.com/korchasa/kulich/pkg/firewall"
+	"github.com/korchasa/kulich/pkg/state"
 	"github.com/korchasa/kulich/pkg/sysshell"
 	"net"
 	"strconv"
@@ -17,13 +16,13 @@ type Iptables struct {
 	dryRun bool
 }
 
-func (i *Iptables) Config(dryRun bool, sh sysshell.Sysshell, opts ...*config.Option) error {
+func (i *Iptables) Config(dryRun bool, sh sysshell.Sysshell, opts ...*state.Option) error {
 	i.sh = sh
 	i.dryRun = dryRun
 	for _, v := range opts {
-		switch v.Type {
+		switch v.Name {
 		default:
-			return fmt.Errorf("unsupported option type `%s`", v.Type)
+			return fmt.Errorf("unsupported option type `%s`", v.Name)
 		}
 	}
 
@@ -42,18 +41,18 @@ func (i *Iptables) AfterRun() error {
 	return nil
 }
 
-func (i *Iptables) Add(r *firewall.Rule) error {
+func (i *Iptables) Add(r *state.Rule) error {
 	return i.cmd(r, "append")
 }
 
-func (i *Iptables) Remove(r *firewall.Rule) error {
+func (i *Iptables) Remove(r *state.Rule) error {
 	return i.cmd(r, "delete")
 }
 
-func (i *Iptables) cmd(r *firewall.Rule, cmd string) error {
+func (i *Iptables) cmd(r *state.Rule, cmd string) error {
 	protocol := r.Protocol
 	if protocol == "" {
-		protocol = firewall.DefaultProtocol
+		protocol = state.DefaultProtocol
 	}
 
 	for _, port := range r.Ports {
@@ -141,7 +140,14 @@ func validPort(port string) bool {
 	return true
 }
 
-func identifier(r *firewall.Rule, target, port string) string {
-	hash := md5.Sum([]byte(fmt.Sprintf("%s-%s-%v-%s-%s", r.Identifier, r.Protocol, r.IsOutput, target, port)))
+func identifier(r *state.Rule, target, port string) string {
+	hash := md5.Sum(
+		[]byte(fmt.Sprintf(
+			"%s-%s-%v-%s-%s",
+			r.Identifier,
+			r.Protocol,
+			r.IsOutput,
+			target,
+			port)))
 	return hex.EncodeToString(hash[:])[0:8]
 }

@@ -2,13 +2,13 @@ package posix
 
 import (
 	"fmt"
+	"github.com/korchasa/kulich/pkg/state"
 	"os"
 
-	"github.com/korchasa/kulich/pkg/filesystem"
 	log "github.com/sirupsen/logrus"
 )
 
-func (fs *Posix) AddDir(d *filesystem.Directory) error {
+func (fs *Posix) AddDir(d *state.Directory) error {
 	log.WithFields(log.Fields{
 		"user":        d.User,
 		"group":       d.Group,

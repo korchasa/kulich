@@ -1,40 +1,18 @@
 package systemd_test
 
 import (
-	"github.com/korchasa/kulich/pkg/services"
 	"github.com/korchasa/kulich/pkg/services/systemd"
+	"github.com/korchasa/kulich/pkg/state"
 	"github.com/korchasa/kulich/pkg/sysshell"
-	log "github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/suite"
 	"testing"
 )
 
-type SystemdTestSuite struct {
-	suite.Suite
-}
-
-func (suite *SystemdTestSuite) SetupTest() {
-	// log.SetLevel(log.DebugLevel)
-	log.SetFormatter(&log.TextFormatter{
-		ForceColors:  true,
-		DisableQuote: true,
-	})
-}
-
-func TestSystemdTestSuite(t *testing.T) {
-	suite.Run(t, new(SystemdTestSuite))
-}
-
-func (suite *SystemdTestSuite) TestImplementInterface() {
-	var _ services.Services = (*systemd.Systemd)(nil)
-}
-
-func (suite *SystemdTestSuite) TestSystemd_Add_NotExists() {
+func TestSystemd_Add_NotExists(t *testing.T) {
 	service := "example"
 	sh := new(sysshell.Mock)
 	sys := new(systemd.Systemd)
-	assert.NoError(suite.T(), sys.Config(false, sh))
+	assert.NoError(t, sys.Config(false, sh))
 
 	sh.
 		On("SafeExec", "/usr/bin/systemctl show example.service --no-pager | grep State").
@@ -44,14 +22,14 @@ func (suite *SystemdTestSuite) TestSystemd_Add_NotExists() {
 			"SubState=dead",
 		}, nil)
 
-	err := sys.Add(&services.Service{
+	err := sys.Add(&state.Service{
 		Name:            service,
 		RestartOnChange: nil,
 	})
-	assert.Error(suite.T(), err, "service `example` doesn't exists")
+	assert.Error(t, err, "service `example` doesn't exists")
 }
 
-func (suite *SystemdTestSuite) TestSystemd_Add() {
+func TestSystemd_Add(t *testing.T) {
 	service := "example"
 
 	sh := new(sysshell.Mock)
@@ -71,17 +49,17 @@ func (suite *SystemdTestSuite) TestSystemd_Add() {
 		Return([]string{}, nil)
 
 	sys := new(systemd.Systemd)
-	assert.NoError(suite.T(), sys.Config(false, sh))
-	err := sys.Add(&services.Service{
+	assert.NoError(t, sys.Config(false, sh))
+	err := sys.Add(&state.Service{
 		Name:            service,
 		RestartOnChange: nil,
 	})
-	assert.NoError(suite.T(), err)
+	assert.NoError(t, err)
 
-	sh.AssertExpectationsInOrder(suite.T())
+	sh.AssertExpectationsInOrder(t)
 }
 
-func (suite *SystemdTestSuite) TestSystemd_Add_DisableService() {
+func TestSystemd_Add_DisableService(t *testing.T) {
 	service := "example"
 
 	sh := new(sysshell.Mock)
@@ -101,19 +79,19 @@ func (suite *SystemdTestSuite) TestSystemd_Add_DisableService() {
 		Return([]string{}, nil)
 
 	sys := new(systemd.Systemd)
-	assert.NoError(suite.T(), sys.Config(false, sh))
-	err := sys.Add(&services.Service{
+	assert.NoError(t, sys.Config(false, sh))
+	err := sys.Add(&state.Service{
 		Name:            service,
 		Disabled:        true,
 		RestartOnChange: nil,
 	})
 
-	sh.AssertExpectationsInOrder(suite.T())
+	sh.AssertExpectationsInOrder(t)
 
-	assert.NoError(suite.T(), err)
+	assert.NoError(t, err)
 }
 
-func (suite *SystemdTestSuite) TestSystemd_Remove() {
+func TestSystemd_Remove(t *testing.T) {
 	service := "example"
 
 	sh := new(sysshell.Mock)
@@ -133,13 +111,13 @@ func (suite *SystemdTestSuite) TestSystemd_Remove() {
 		Return([]string{}, nil)
 
 	sys := new(systemd.Systemd)
-	assert.NoError(suite.T(), sys.Config(false, sh))
-	err := sys.Remove(&services.Service{
+	assert.NoError(t, sys.Config(false, sh))
+	err := sys.Remove(&state.Service{
 		Name:            service,
 		RestartOnChange: nil,
 	})
 
-	sh.AssertExpectationsInOrder(suite.T())
+	sh.AssertExpectationsInOrder(t)
 
-	assert.NoError(suite.T(), err)
+	assert.NoError(t, err)
 }

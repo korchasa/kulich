@@ -2,8 +2,7 @@ package systemd
 
 import (
 	"fmt"
-	"github.com/korchasa/kulich/pkg/config"
-	"github.com/korchasa/kulich/pkg/services"
+	"github.com/korchasa/kulich/pkg/state"
 	"github.com/korchasa/kulich/pkg/sysshell"
 	"strings"
 )
@@ -29,13 +28,13 @@ type Systemd struct {
 	sh     sysshell.Sysshell
 }
 
-func (sys *Systemd) Config(dryRun bool, sh sysshell.Sysshell, opts ...*config.Option) error {
+func (sys *Systemd) Config(dryRun bool, sh sysshell.Sysshell, opts ...*state.Option) error {
 	sys.sh = sh
 	sys.dryRun = dryRun
 	for _, v := range opts {
-		switch v.Type {
+		switch v.Name {
 		default:
-			return fmt.Errorf("unsupported option type `%s`", v.Type)
+			return fmt.Errorf("unsupported option type `%s`", v.Name)
 		}
 	}
 
@@ -54,7 +53,7 @@ func (sys *Systemd) AfterRun() error {
 	return nil
 }
 
-func (sys *Systemd) Add(s *services.Service) error {
+func (sys *Systemd) Add(s *state.Service) error {
 	loadState, unitState, activeState, subState, err := sys.serviceState(s.Name)
 	if err != nil {
 		return fmt.Errorf("can't get service `%s` state: %w", s.Name, err)
@@ -95,7 +94,7 @@ func (sys *Systemd) Add(s *services.Service) error {
 	}
 }
 
-func (sys *Systemd) Remove(s *services.Service) error {
+func (sys *Systemd) Remove(s *state.Service) error {
 	loadState, unitState, activeState, _, err := sys.serviceState(s.Name)
 	if err != nil {
 		return fmt.Errorf("can't get service `%s` state: %w", s.Name, err)
