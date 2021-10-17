@@ -13,8 +13,8 @@ type Os interface {
 	Config(dryRun bool, sh sysshell.Sysshell, opts ...*config.Option) error
 	FirstRun() error
 	BeforeAll() error
-	AddUser(u *User)
-	RemoveUser(u *User)
+	AddUser(u *User) error
+	RemoveUser(u *User) error
 	SetOption(opt *config.Option) error
 	BeforePackages(p *packages.Packages) error
 	AfterPackages(p *packages.Packages) error
@@ -28,9 +28,6 @@ type Os interface {
 }
 
 type User struct {
-	Name           string
-	Shell          string
-	Home           string
-	AuthorizedKeys string
-	Removed        bool
+	Name   string
+	System bool
 }
