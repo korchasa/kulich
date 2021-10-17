@@ -3,11 +3,11 @@ package yum
 import (
 	"context"
 	"fmt"
-	"github.com/korchasa/ruchki/pkg/config"
+	"github.com/korchasa/kulich/pkg/config"
 	"os/exec"
 	"time"
 
-	"github.com/korchasa/ruchki/pkg/sysshell"
+	"github.com/korchasa/kulich/pkg/sysshell"
 	log "github.com/sirupsen/logrus"
 )
 

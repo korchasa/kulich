@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
-	"github.com/korchasa/ruchki/pkg/sysshell"
+	"github.com/korchasa/kulich/pkg/sysshell"
 	log "github.com/sirupsen/logrus"
 	"os/exec"
 	"strings"

@@ -2,13 +2,13 @@ package centos7
 
 import (
 	"fmt"
-	"github.com/korchasa/ruchki/pkg/config"
-	"github.com/korchasa/ruchki/pkg/filesystem"
-	"github.com/korchasa/ruchki/pkg/firewall"
-	"github.com/korchasa/ruchki/pkg/os"
-	"github.com/korchasa/ruchki/pkg/packages"
-	"github.com/korchasa/ruchki/pkg/services"
-	"github.com/korchasa/ruchki/pkg/sysshell"
+	"github.com/korchasa/kulich/pkg/config"
+	"github.com/korchasa/kulich/pkg/filesystem"
+	"github.com/korchasa/kulich/pkg/firewall"
+	"github.com/korchasa/kulich/pkg/os"
+	"github.com/korchasa/kulich/pkg/packages"
+	"github.com/korchasa/kulich/pkg/services"
+	"github.com/korchasa/kulich/pkg/sysshell"
 	"os/exec"
 	"strings"
 )

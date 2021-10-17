@@ -1,8 +1,8 @@
 package posix_test
 
 import (
-	"github.com/korchasa/ruchki/pkg/sysshell"
-	"github.com/korchasa/ruchki/pkg/sysshell/posix"
+	"github.com/korchasa/kulich/pkg/sysshell"
+	"github.com/korchasa/kulich/pkg/sysshell/posix"
 	"testing"
 )
 

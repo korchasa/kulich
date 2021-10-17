@@ -2,16 +2,16 @@ package pkg
 
 import (
 	"fmt"
-	"github.com/korchasa/ruchki/pkg/filesystem"
-	"github.com/korchasa/ruchki/pkg/filesystem/posix"
-	"github.com/korchasa/ruchki/pkg/firewall"
-	"github.com/korchasa/ruchki/pkg/firewall/iptables"
-	"github.com/korchasa/ruchki/pkg/os"
-	"github.com/korchasa/ruchki/pkg/os/centos7"
-	"github.com/korchasa/ruchki/pkg/packages"
-	"github.com/korchasa/ruchki/pkg/packages/yum"
-	"github.com/korchasa/ruchki/pkg/services"
-	"github.com/korchasa/ruchki/pkg/services/systemd"
+	"github.com/korchasa/kulich/pkg/filesystem"
+	"github.com/korchasa/kulich/pkg/filesystem/posix"
+	"github.com/korchasa/kulich/pkg/firewall"
+	"github.com/korchasa/kulich/pkg/firewall/iptables"
+	"github.com/korchasa/kulich/pkg/os"
+	"github.com/korchasa/kulich/pkg/os/centos7"
+	"github.com/korchasa/kulich/pkg/packages"
+	"github.com/korchasa/kulich/pkg/packages/yum"
+	"github.com/korchasa/kulich/pkg/services"
+	"github.com/korchasa/kulich/pkg/services/systemd"
 )
 
 func NewFilesystem(name string) (filesystem.Filesystem, error) {

@@ -3,7 +3,7 @@ package posix
 import (
 	"crypto/sha256"
 	"fmt"
-	"github.com/korchasa/ruchki/pkg/filesystem"
+	"github.com/korchasa/kulich/pkg/filesystem"
 	log "github.com/sirupsen/logrus"
 	"io/ioutil"
 	"net/url"

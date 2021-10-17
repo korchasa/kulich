@@ -1,11 +1,11 @@
 package yum_test
 
 import (
-	"github.com/korchasa/ruchki/pkg/packages/yum"
+	"github.com/korchasa/kulich/pkg/packages/yum"
 	"github.com/stretchr/testify/suite"
 	"testing"
 
-	"github.com/korchasa/ruchki/pkg/sysshell/posix"
+	"github.com/korchasa/kulich/pkg/sysshell/posix"
 	log "github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
 )

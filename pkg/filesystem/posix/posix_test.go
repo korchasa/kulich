@@ -1,8 +1,8 @@
 package posix_test
 
 import (
-	"github.com/korchasa/ruchki/pkg/filesystem"
-	"github.com/korchasa/ruchki/pkg/filesystem/posix"
+	"github.com/korchasa/kulich/pkg/filesystem"
+	"github.com/korchasa/kulich/pkg/filesystem/posix"
 	"testing"
 )
 

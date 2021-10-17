@@ -1,9 +1,9 @@
 package yum_test
 
 import (
-	"github.com/korchasa/ruchki/pkg/packages"
-	"github.com/korchasa/ruchki/pkg/packages/yum"
-	"github.com/korchasa/ruchki/pkg/sysshell"
+	"github.com/korchasa/kulich/pkg/packages"
+	"github.com/korchasa/kulich/pkg/packages/yum"
+	"github.com/korchasa/kulich/pkg/sysshell"
 	log "github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"

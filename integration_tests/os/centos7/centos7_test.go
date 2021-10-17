@@ -1,9 +1,9 @@
 package centos7_test
 
 import (
-	"github.com/korchasa/ruchki/pkg/os"
-	"github.com/korchasa/ruchki/pkg/os/centos7"
-	"github.com/korchasa/ruchki/pkg/sysshell/posix"
+	"github.com/korchasa/kulich/pkg/os"
+	"github.com/korchasa/kulich/pkg/os/centos7"
+	"github.com/korchasa/kulich/pkg/sysshell/posix"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
 	"testing"

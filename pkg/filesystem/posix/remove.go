@@ -1,7 +1,7 @@
 package posix
 
 import (
-	"github.com/korchasa/ruchki/pkg/filesystem"
+	"github.com/korchasa/kulich/pkg/filesystem"
 	"os"
 )
 

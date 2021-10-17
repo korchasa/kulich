@@ -1,8 +1,8 @@
 package packages
 
 import (
-	"github.com/korchasa/ruchki/pkg/config"
-	"github.com/korchasa/ruchki/pkg/sysshell"
+	"github.com/korchasa/kulich/pkg/config"
+	"github.com/korchasa/kulich/pkg/sysshell"
 )
 
 type Packages interface {

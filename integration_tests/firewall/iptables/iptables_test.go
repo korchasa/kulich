@@ -1,9 +1,9 @@
 package iptables_test
 
 import (
-	"github.com/korchasa/ruchki/pkg/firewall"
-	"github.com/korchasa/ruchki/pkg/firewall/iptables"
-	"github.com/korchasa/ruchki/pkg/sysshell/posix"
+	"github.com/korchasa/kulich/pkg/firewall"
+	"github.com/korchasa/kulich/pkg/firewall/iptables"
+	"github.com/korchasa/kulich/pkg/sysshell/posix"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
 	"testing"

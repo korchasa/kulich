@@ -1,4 +1,4 @@
-module github.com/korchasa/ruchki
+module github.com/korchasa/kulich
 
 go 1.16
 

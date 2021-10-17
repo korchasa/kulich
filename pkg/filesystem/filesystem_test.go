@@ -2,7 +2,7 @@ package filesystem_test
 
 import (
 	"errors"
-	"github.com/korchasa/ruchki/pkg/filesystem"
+	"github.com/korchasa/kulich/pkg/filesystem"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )

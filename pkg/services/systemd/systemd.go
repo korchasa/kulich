@@ -2,9 +2,9 @@ package systemd
 
 import (
 	"fmt"
-	"github.com/korchasa/ruchki/pkg/config"
-	"github.com/korchasa/ruchki/pkg/services"
-	"github.com/korchasa/ruchki/pkg/sysshell"
+	"github.com/korchasa/kulich/pkg/config"
+	"github.com/korchasa/kulich/pkg/services"
+	"github.com/korchasa/kulich/pkg/sysshell"
 	"strings"
 )
 

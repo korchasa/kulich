@@ -1,9 +1,9 @@
 package systemd_test
 
 import (
-	"github.com/korchasa/ruchki/pkg/services"
-	"github.com/korchasa/ruchki/pkg/services/systemd"
-	"github.com/korchasa/ruchki/pkg/sysshell"
+	"github.com/korchasa/kulich/pkg/services"
+	"github.com/korchasa/kulich/pkg/services/systemd"
+	"github.com/korchasa/kulich/pkg/sysshell"
 	log "github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"

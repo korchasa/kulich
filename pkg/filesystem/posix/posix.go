@@ -2,7 +2,7 @@ package posix
 
 import (
 	"fmt"
-	"github.com/korchasa/ruchki/pkg/config"
+	"github.com/korchasa/kulich/pkg/config"
 	"os"
 )
 
