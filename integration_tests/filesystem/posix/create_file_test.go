@@ -152,7 +152,7 @@ func (suite *FsIntegrationTestSuite) TestCreateFile_FromTemplate() {
 		Group:       "nobody",
 		Permissions: 0o755,
 		IsTemplate:  true,
-		TemplateVars: map[string]interface{}{
+		TemplateVars: map[string]string{
 			"name": "world",
 		},
 	}

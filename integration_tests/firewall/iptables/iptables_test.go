@@ -32,7 +32,7 @@ func (suite *IptablesIntegrationTestSuite) TestAdd() {
 	ipt := new(iptables.Iptables)
 	assert.NoError(suite.T(), ipt.Config(false, sh))
 
-	err := ipt.Add(&state.Rule{Ports: []string{"10001", "10100:10200"}, Targets: []string{"192.158.1.1", "192.158.1.0/24"}})
+	err := ipt.Add(&state.FirewallRule{Ports: []string{"10001", "10100:10200"}, Targets: []string{"192.158.1.1", "192.158.1.0/24"}})
 	assert.NoError(suite.T(), err)
 }
 
@@ -41,10 +41,10 @@ func (suite *IptablesIntegrationTestSuite) TestRemove() {
 	ipt := new(iptables.Iptables)
 	assert.NoError(suite.T(), ipt.Config(false, sh))
 
-	err := ipt.Add(&state.Rule{Ports: []string{"20000", "20100:20200"}, Targets: []string{"192.158.2.1", "192.158.2.0/24"}})
+	err := ipt.Add(&state.FirewallRule{Ports: []string{"20000", "20100:20200"}, Targets: []string{"192.158.2.1", "192.158.2.0/24"}})
 	assert.NoError(suite.T(), err)
-	err = ipt.Remove(&state.Rule{Ports: []string{"20000"}, Targets: []string{"192.158.2.1"}})
+	err = ipt.Remove(&state.FirewallRule{Ports: []string{"20000"}, Targets: []string{"192.158.2.1"}})
 	assert.NoError(suite.T(), err)
-	err = ipt.Remove(&state.Rule{Ports: []string{"20100:20200"}, Targets: []string{"192.158.2.0/24"}})
+	err = ipt.Remove(&state.FirewallRule{Ports: []string{"20100:20200"}, Targets: []string{"192.158.2.0/24"}})
 	assert.NoError(suite.T(), err)
 }

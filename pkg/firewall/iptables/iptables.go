@@ -41,15 +41,15 @@ func (i *Iptables) AfterRun() error {
 	return nil
 }
 
-func (i *Iptables) Add(r *state.Rule) error {
+func (i *Iptables) Add(r *state.FirewallRule) error {
 	return i.cmd(r, "append")
 }
 
-func (i *Iptables) Remove(r *state.Rule) error {
+func (i *Iptables) Remove(r *state.FirewallRule) error {
 	return i.cmd(r, "delete")
 }
 
-func (i *Iptables) cmd(r *state.Rule, cmd string) error {
+func (i *Iptables) cmd(r *state.FirewallRule, cmd string) error {
 	protocol := r.Protocol
 	if protocol == "" {
 		protocol = state.DefaultProtocol
@@ -140,7 +140,7 @@ func validPort(port string) bool {
 	return true
 }
 
-func identifier(r *state.Rule, target, port string) string {
+func identifier(r *state.FirewallRule, target, port string) string {
 	hash := md5.Sum(
 		[]byte(fmt.Sprintf(
 			"%s-%s-%v-%s-%s",

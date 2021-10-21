@@ -9,8 +9,8 @@ type Firewall interface {
 	Config(dryRun bool, sh sysshell.Sysshell, opts ...*state.Option) error
 	FirstRun() error
 	BeforeRun() error
-	Add(r *state.Rule) error
-	Remove(r *state.Rule) error
+	Add(r *state.FirewallRule) error
+	Remove(r *state.FirewallRule) error
 	AfterRun() error
 }
 

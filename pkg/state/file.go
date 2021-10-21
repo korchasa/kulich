@@ -7,15 +7,15 @@ import (
 )
 
 type File struct {
-	Path         string `hcl:"path,label"`
-	From         string `hcl:"from"`
-	IsTemplate   bool   `hcl:"template,optional"`
-	TemplateVars interface{}
-	IsCompressed bool        `hcl:"compressed,optional"`
-	User         string      `hcl:"user"`
-	Group        string      `hcl:"group"`
-	Permissions  fs.FileMode `hcl:"permissions"`
-	Hash         string      `hcl:"hash,optional"`
+	Path         string            `hcl:"path,label"`
+	From         string            `hcl:"from"`
+	IsTemplate   bool              `hcl:"template,optional"`
+	TemplateVars map[string]string `hcl:"template_vars,optional"`
+	IsCompressed bool              `hcl:"compressed,optional"`
+	User         string            `hcl:"user"`
+	Group        string            `hcl:"group"`
+	Permissions  fs.FileMode       `hcl:"permissions"`
+	Hash         string            `hcl:"hash,optional"`
 }
 
 func (f *File) Validate() error {
@@ -36,6 +36,40 @@ func (f *File) Validate() error {
 	}
 
 	return nil
+}
+
+func (f *File) Apply(fo FileOverride) bool {
+	if f.Path != fo.Path {
+		return false
+	}
+	if fo.From != nil {
+		f.From = *fo.From
+	}
+	if fo.From != nil {
+		f.From = *fo.From
+	}
+	if fo.IsTemplate != nil {
+		f.IsTemplate = *fo.IsTemplate
+	}
+	if fo.TemplateVars != nil {
+		f.TemplateVars = fo.TemplateVars
+	}
+	if fo.IsCompressed != nil {
+		f.IsCompressed = *fo.IsCompressed
+	}
+	if fo.User != nil {
+		f.User = *fo.User
+	}
+	if fo.Group != nil {
+		f.Group = *fo.Group
+	}
+	if fo.Permissions != nil {
+		f.Permissions = *fo.Permissions
+	}
+	if fo.Hash != nil {
+		f.Hash = *fo.Hash
+	}
+	return true
 }
 
 func (f *File) Diffs(a *File) (diffs []string) {
@@ -71,16 +105,4 @@ func (f *File) String() string {
 	sb = append(sb, fmt.Sprintf("permissions=%s", f.Permissions))
 
 	return strings.Join(sb, " ")
-}
-
-type FileOverride struct {
-	Path         string  `hcl:"path,label"`
-	From         *string `hcl:"from"`
-	IsTemplate   *bool   `hcl:"template"`
-	TemplateVars interface{}
-	IsCompressed *bool        `hcl:"compressed"`
-	User         *string      `hcl:"user"`
-	Group        *string      `hcl:"group"`
-	Permissions  *fs.FileMode `hcl:"permissions"`
-	Hash         *string      `hcl:"hash"`
 }

@@ -1,6 +1,8 @@
 package state
 
-type Rule struct {
+const DefaultProtocol = "tcp"
+
+type FirewallRule struct {
 	Name       string   `hcl:"name,label"`
 	Identifier string   `hcl:"identifier,optional"`
 	Ports      []string `hcl:"ports"`
@@ -9,13 +11,39 @@ type Rule struct {
 	IsOutput   bool     `hcl:"is_output,optional"`
 }
 
-const DefaultProtocol = "tcp"
+func (r *FirewallRule) Apply(f FirewallRuleOverride) bool {
+	if r.Name != f.Name {
+		return false
+	}
+	if f.Ports != nil {
+		r.Ports = f.Ports
+	}
+	if f.Protocol != nil {
+		r.Protocol = *f.Protocol
+	}
+	if f.Targets != nil {
+		r.Targets = f.Targets
+	}
+	if f.IsOutput != nil {
+		r.IsOutput = *f.IsOutput
+	}
+	return true
+}
 
-type RuleOverride struct {
-	Name       string    `hcl:"name,label"`
-	Identifier *string   `hcl:"identifier"`
-	Ports      *[]string `hcl:"ports"`
-	Protocol   *string   `hcl:"protocol"`
-	Targets    *[]string `hcl:"targets"`
-	IsOutput   *bool     `hcl:"is_output"`
+type FirewallRuleOverride struct {
+	Name     string   `hcl:"name,label"`
+	Ports    []string `hcl:"ports,optional"`
+	Protocol *string  `hcl:"protocol,optional"`
+	Targets  []string `hcl:"targets,optional"`
+	IsOutput *bool    `hcl:"is_output,optional"`
+}
+
+func (o *FirewallRuleOverride) NewRule() FirewallRule {
+	return FirewallRule{
+		Name:     o.Name,
+		Ports:    o.Ports,
+		Protocol: *o.Protocol,
+		Targets:  o.Targets,
+		IsOutput: *o.IsOutput,
+	}
 }

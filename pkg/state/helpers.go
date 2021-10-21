@@ -1,27 +1,34 @@
 package state
 
+import (
+	"io/fs"
+)
+
 func BoolRef(b bool) *bool {
 	return &b
 }
 
-func BoolRefValueString(b *bool) string {
-	if b == nil {
-		return "nil"
+func BoolDeref(b *bool) bool {
+	if nil == b {
+		return false
 	}
-	if *b {
-		return "true"
-	} else {
-		return "false"
-	}
-}
-
-func StringRefValueString(s *string) string {
-	if s == nil {
-		return "nil"
-	}
-	return *s
+	return *b
 }
 
 func StringRef(s string) *string {
 	return &s
+}
+
+func StringDeref(s *string) string {
+	if s == nil {
+		return ""
+	}
+	return *s
+}
+
+func FileModeDeref(i *fs.FileMode) fs.FileMode {
+	if i == nil {
+		return 0
+	}
+	return *i
 }
