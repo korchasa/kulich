@@ -11,8 +11,8 @@ func TestReadServerState(t *testing.T) {
 	assert.NoError(t, err)
 	assert.Equal(
 		t,
-		state.State{
-			Role: state.Role{
+		state.Root{
+			State: state.State{
 				Name: "nomad-clients",
 				Config: state.Config{
 					OsDriver:         state.DriverConfig{Name: "centos7"},

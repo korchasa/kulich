@@ -117,7 +117,7 @@ func (sys *Systemd) Remove(s *state.Service) error {
 }
 
 func (sys *Systemd) serviceState(name string) (ls loadState, us unitState, as activeState, ss subState, err error) {
-	out, err := sys.sh.SafeExecf("/usr/bin/systemctl show %s.service --no-pager | grep State", name)
+	out, err := sys.sh.SafeExecf("/usr/bin/systemctl show %s.service --no-pager | grep Root", name)
 	if err != nil {
 		err = fmt.Errorf("can't exec systemctl list: %w", err)
 		return

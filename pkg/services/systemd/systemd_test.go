@@ -15,7 +15,7 @@ func TestSystemd_Add_NotExists(t *testing.T) {
 	assert.NoError(t, sys.Config(false, sh))
 
 	sh.
-		On("SafeExec", "/usr/bin/systemctl show example.service --no-pager | grep State").
+		On("SafeExec", "/usr/bin/systemctl show example.service --no-pager | grep Root").
 		Return([]string{
 			"LoadState=not-found",
 			"ActiveState=inactive",
@@ -34,7 +34,7 @@ func TestSystemd_Add(t *testing.T) {
 
 	sh := new(sysshell.Mock)
 	sh.
-		On("SafeExec", "/usr/bin/systemctl show example.service --no-pager | grep State").
+		On("SafeExec", "/usr/bin/systemctl show example.service --no-pager | grep Root").
 		Return([]string{
 			"LoadState=loaded",
 			"ActiveState=inactive",
@@ -64,7 +64,7 @@ func TestSystemd_Add_DisableService(t *testing.T) {
 
 	sh := new(sysshell.Mock)
 	sh.
-		On("SafeExec", "/usr/bin/systemctl show example.service --no-pager | grep State").
+		On("SafeExec", "/usr/bin/systemctl show example.service --no-pager | grep Root").
 		Return([]string{
 			"LoadState=loaded",
 			"ActiveState=active",
@@ -96,7 +96,7 @@ func TestSystemd_Remove(t *testing.T) {
 
 	sh := new(sysshell.Mock)
 	sh.
-		On("SafeExec", "/usr/bin/systemctl show example.service --no-pager | grep State").
+		On("SafeExec", "/usr/bin/systemctl show example.service --no-pager | grep Root").
 		Return([]string{
 			"LoadState=loaded",
 			"ActiveState=active",

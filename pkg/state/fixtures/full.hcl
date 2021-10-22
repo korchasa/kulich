@@ -1,4 +1,4 @@
-role "nomad-clients" {
+state "nomad-clients" {
   config {
     packages "yum" {}
     services "systemctl" {}
@@ -65,52 +65,52 @@ role "nomad-clients" {
       targets = []
     }
   }
+}
 
-  server "node1-nomad" {
-    system {
-      os_option "hostnamectl" "hostname" {
-        value = "node1-nomad"
-      }
-      file "/etc/yum.repos.d/docker-ce.repo" {
-        from        = "./docker-ce.repo"
-        user        = "consul"
-        group       = "consul"
-        permissions = 0600
-      }
+server "node1-nomad" {
+  system {
+    os_option "hostnamectl" "hostname" {
+      value = "node1-nomad"
     }
-    application "consul" {
-      firewall "consul" {
-        targets = [
-          "111.111.111.111/16",
-          "222.222.222.222",
-          "333.333.333.333"
-        ]
-      }
-    }
-    application "some-app" {
-      file "/tmp/some-app.txt" {
-        from        = "./some-app.txt"
-        user        = "consul"
-        group       = "consul"
-        permissions = 0600
-      }
+    file "/etc/yum.repos.d/docker-ce.repo" {
+      from        = "./docker-ce.repo"
+      user        = "consul"
+      group       = "consul"
+      permissions = 0600
     }
   }
-
-  server "node2-nomad" {
-    system {
-      os_option "hostnamectl" "hostname" {
-        value = "node2-nomad"
-      }
+  application "consul" {
+    firewall "consul" {
+      targets = [
+        "111.111.111.111/16",
+        "222.222.222.222",
+        "333.333.333.333"
+      ]
     }
-    application "consul" {
-      firewall "consul" {
-        targets = [
-          "444.444.444.444/16",
-          "555.555.555.555",
-          "666.666.666.66"
-        ]
-      }
+  }
+  application "some-app" {
+    file "/tmp/some-app.txt" {
+      from        = "./some-app.txt"
+      user        = "consul"
+      group       = "consul"
+      permissions = 0600
+    }
+  }
+}
+
+server "node2-nomad" {
+  system {
+    os_option "hostnamectl" "hostname" {
+      value = "node2-nomad"
+    }
+  }
+  application "consul" {
+    firewall "consul" {
+      targets = [
+        "444.444.444.444/16",
+        "555.555.555.555",
+        "666.666.666.66"
+      ]
     }
   }
 }

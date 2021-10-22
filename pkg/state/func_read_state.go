@@ -5,20 +5,20 @@ import (
 	"github.com/hashicorp/hcl/v2/hclsimple"
 )
 
-func ReadServerState(path string, serverName string) (*State, error) {
-	var spec State
+func ReadServerState(path string, serverName string) (*Root, error) {
+	var spec Root
 	if err := hclsimple.DecodeFile(path, nil, &spec); err != nil {
 		return nil, fmt.Errorf("can't decode `%s` hcl: %w", path, err)
 	}
 
-	for _, serv := range spec.Role.Servers {
+	for _, serv := range spec.Servers {
 		if serv.Name != serverName {
 			continue
 		}
-		spec.Role.Apply(serv)
+		spec.State.Apply(serv)
 	}
 
-	spec.Role.Servers = nil
+	spec.Servers = nil
 
 	return &spec, nil
 }
