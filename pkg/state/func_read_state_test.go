@@ -22,7 +22,7 @@ func TestReadServerState(t *testing.T) {
 					FirewallDriver:   state.DriverConfig{Name: "iptables"},
 				},
 				System: state.System{
-					OsOptions: []state.Option{
+					OsOptions: []state.OsOption{
 						{Type: "hostnamectl", Name: "hostname", Value: "node1-nomad"},
 						{Type: "selinux", Name: "enabled", Value: "false"},
 					},
@@ -58,7 +58,7 @@ func TestReadServerState(t *testing.T) {
 				Applications: []state.Application{
 					{
 						Name: "consul",
-						OsOptions: []state.Option{{
+						OsOptions: []state.OsOption{{
 							Type:  "env",
 							Name:  "CONSUL_HTTP_ADDR",
 							Value: "http://127.0.0.1:8500",

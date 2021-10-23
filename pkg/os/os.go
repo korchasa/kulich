@@ -10,12 +10,12 @@ import (
 )
 
 type Os interface {
-	Config(dryRun bool, sh sysshell.Sysshell, opts ...*state.Option) error
+	Config(dryRun bool, sh sysshell.Sysshell, opts ...*state.OsOption) error
 	FirstRun() error
 	BeforeAll() error
 	AddUser(u *state.User) error
 	RemoveUser(u *state.User) error
-	SetOption(opt *state.Option) error
+	SetOption(opt *state.OsOption) error
 	BeforePackages(p *packages.Packages) error
 	AfterPackages(p *packages.Packages) error
 	BeforeFilesystem(f *filesystem.Filesystem) error

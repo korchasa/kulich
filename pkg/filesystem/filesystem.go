@@ -5,7 +5,7 @@ import (
 )
 
 type Filesystem interface {
-	Config(dryRun bool, opts ...*state.Option) error
+	Config(dryRun bool, opts ...*state.OsOption) error
 	FirstRun() error
 	BeforeRun() error
 	AddFile(f *state.File) error

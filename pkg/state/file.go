@@ -18,6 +18,14 @@ type File struct {
 	Hash         string            `hcl:"hash,optional"`
 }
 
+func (f File) Identifier() string {
+	return f.Path
+}
+
+func (f File) EqualityHash() string {
+	return fmt.Sprintf("%v", f)
+}
+
 func (f *File) Validate() error {
 	if f.Path == "" {
 		return fmt.Errorf("file path not specified")
@@ -71,4 +79,11 @@ func (f *File) String() string {
 	sb = append(sb, fmt.Sprintf("permissions=%s", f.Permissions))
 
 	return strings.Join(sb, " ")
+}
+
+type Files []File
+
+type FilesDiff struct {
+	Changed []File
+	Removed []File
 }

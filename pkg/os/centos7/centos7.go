@@ -17,7 +17,7 @@ type Centos7 struct {
 	sh     sysshell.Sysshell
 }
 
-func (c *Centos7) Config(dryRun bool, sh sysshell.Sysshell, opts ...*state.Option) error {
+func (c *Centos7) Config(dryRun bool, sh sysshell.Sysshell, opts ...*state.OsOption) error {
 	c.sh = sh
 	c.dryRun = dryRun
 	for _, v := range opts {
@@ -76,39 +76,39 @@ func (c *Centos7) RemoveUser(u *state.User) error {
 	return nil
 }
 
-func (c *Centos7) SetOption(opt *state.Option) error {
+func (c *Centos7) SetOption(_ *state.OsOption) error {
 	panic("implement me")
 }
 
-func (c *Centos7) BeforePackages(p *packages.Packages) error {
+func (c *Centos7) BeforePackages(_ *packages.Packages) error {
 	panic("implement me")
 }
 
-func (c *Centos7) AfterPackages(p *packages.Packages) error {
+func (c *Centos7) AfterPackages(_ *packages.Packages) error {
 	panic("implement me")
 }
 
-func (c *Centos7) BeforeFilesystem(f *filesystem.Filesystem) error {
+func (c *Centos7) BeforeFilesystem(_ *filesystem.Filesystem) error {
 	panic("implement me")
 }
 
-func (c *Centos7) AfterFilesystem(f *filesystem.Filesystem) error {
+func (c *Centos7) AfterFilesystem(_ *filesystem.Filesystem) error {
 	panic("implement me")
 }
 
-func (c *Centos7) BeforeServices(f *services.Services) error {
+func (c *Centos7) BeforeServices(_ *services.Services) error {
 	panic("implement me")
 }
 
-func (c *Centos7) AfterServices(f *services.Services) error {
+func (c *Centos7) AfterServices(_ *services.Services) error {
 	panic("implement me")
 }
 
-func (c *Centos7) BeforeFirewall(f *firewall.Firewall) error {
+func (c *Centos7) BeforeFirewall(_ *firewall.Firewall) error {
 	panic("implement me")
 }
 
-func (c *Centos7) AfterFirewall(f *firewall.Firewall) error {
+func (c *Centos7) AfterFirewall(_ *firewall.Firewall) error {
 	panic("implement me")
 }
 

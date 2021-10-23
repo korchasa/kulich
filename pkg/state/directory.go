@@ -12,6 +12,14 @@ type Directory struct {
 	Permissions fs.FileMode `hcl:"permissions"`
 }
 
+func (d Directory) Identifier() string {
+	return d.Path
+}
+
+func (d Directory) EqualityHash() string {
+	return fmt.Sprintf("%v", d)
+}
+
 func (d *Directory) Validate() error {
 	if d.Path == "" {
 		return fmt.Errorf("directory path is empty")
@@ -27,4 +35,11 @@ func (d *Directory) Validate() error {
 	}
 
 	return nil
+}
+
+type Directories []Directory
+
+type DirectoriesDiff struct {
+	Changed []Directory
+	Removed []Directory
 }

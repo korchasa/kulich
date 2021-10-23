@@ -6,7 +6,7 @@ import (
 )
 
 type Firewall interface {
-	Config(dryRun bool, sh sysshell.Sysshell, opts ...*state.Option) error
+	Config(dryRun bool, sh sysshell.Sysshell, opts ...*state.OsOption) error
 	FirstRun() error
 	BeforeRun() error
 	Add(r *state.FirewallRule) error

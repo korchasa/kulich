@@ -11,7 +11,7 @@ type Posix struct {
 	tempDir string
 }
 
-func (fs *Posix) Config(dryRun bool, opts ...*state.Option) error {
+func (fs *Posix) Config(dryRun bool, opts ...*state.OsOption) error {
 	fs.dryRun = dryRun
 	for _, v := range opts {
 		switch v.Name {

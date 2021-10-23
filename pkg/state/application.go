@@ -2,7 +2,7 @@ package state
 
 type Application struct {
 	Name          string         `hcl:"name,label"`
-	OsOptions     []Option       `hcl:"os_option,block"`
+	OsOptions     []OsOption     `hcl:"os_option,block"`
 	Users         []User         `hcl:"user,block"`
 	Packages      []Package      `hcl:"package,block"`
 	Directories   []Directory    `hcl:"directory,block"`
@@ -10,3 +10,5 @@ type Application struct {
 	Services      []Service      `hcl:"service,block"`
 	FirewallRules []FirewallRule `hcl:"firewall,block"`
 }
+
+type Applications []Application

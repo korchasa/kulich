@@ -28,7 +28,7 @@ type Systemd struct {
 	sh     sysshell.Sysshell
 }
 
-func (sys *Systemd) Config(dryRun bool, sh sysshell.Sysshell, opts ...*state.Option) error {
+func (sys *Systemd) Config(dryRun bool, sh sysshell.Sysshell, opts ...*state.OsOption) error {
 	sys.sh = sh
 	sys.dryRun = dryRun
 	for _, v := range opts {

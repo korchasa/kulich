@@ -16,7 +16,7 @@ type Iptables struct {
 	dryRun bool
 }
 
-func (i *Iptables) Config(dryRun bool, sh sysshell.Sysshell, opts ...*state.Option) error {
+func (i *Iptables) Config(dryRun bool, sh sysshell.Sysshell, opts ...*state.OsOption) error {
 	i.sh = sh
 	i.dryRun = dryRun
 	for _, v := range opts {

@@ -16,7 +16,7 @@ type Yum struct {
 	dryRun bool
 }
 
-func (y *Yum) Config(dryRun bool, sh sysshell.Sysshell, opts ...*state.Option) error {
+func (y *Yum) Config(dryRun bool, sh sysshell.Sysshell, opts ...*state.OsOption) error {
 	y.sh = sh
 	y.dryRun = dryRun
 	for _, v := range opts {
@@ -81,7 +81,7 @@ func (y *Yum) Add(p *state.Package) error {
 }
 
 func (y *Yum) Remove(p *state.Package) error {
-	log.Infof("Remove package `%s`", p.Name)
+	log.Infof("Removed package `%s`", p.Name)
 	if y.dryRun {
 		return nil
 	}
