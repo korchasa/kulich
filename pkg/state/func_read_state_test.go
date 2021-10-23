@@ -7,7 +7,7 @@ import (
 )
 
 func TestReadServerState(t *testing.T) {
-	st, err := state.ReadServerState("./fixtures/full.hcl", "node1-nomad")
+	st, err := state.ReadServerState("./fixtures/full.hcl")
 	assert.NoError(t, err)
 	assert.Equal(
 		t,
@@ -23,8 +23,8 @@ func TestReadServerState(t *testing.T) {
 				},
 				System: state.System{
 					OsOptions: []state.Option{
-						{Type: "selinux", Name: "enabled", Value: "false"},
 						{Type: "hostnamectl", Name: "hostname", Value: "node1-nomad"},
+						{Type: "selinux", Name: "enabled", Value: "false"},
 					},
 					Users: []state.User{{
 						Name:   "alice",
@@ -111,22 +111,10 @@ func TestReadServerState(t *testing.T) {
 								Name:  "consul",
 								Ports: []string{"8300:8302", "8500:8502", "8600"},
 								Targets: []string{
-									"111.111.111.111/16",
-									"222.222.222.222",
-									"333.333.333.333",
+									"444.444.444.444/16",
+									"555.555.555.555",
+									"666.666.666.66",
 								},
-							},
-						},
-					},
-					{
-						Name: "some-app",
-						Files: []state.File{
-							{
-								Path:        "/tmp/some-app.txt",
-								From:        "./some-app.txt",
-								User:        "consul",
-								Group:       "consul",
-								Permissions: 600,
 							},
 						},
 					},

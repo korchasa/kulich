@@ -38,40 +38,6 @@ func (f *File) Validate() error {
 	return nil
 }
 
-func (f *File) Apply(fo FileOverride) bool {
-	if f.Path != fo.Path {
-		return false
-	}
-	if fo.From != nil {
-		f.From = *fo.From
-	}
-	if fo.From != nil {
-		f.From = *fo.From
-	}
-	if fo.IsTemplate != nil {
-		f.IsTemplate = *fo.IsTemplate
-	}
-	if fo.TemplateVars != nil {
-		f.TemplateVars = fo.TemplateVars
-	}
-	if fo.IsCompressed != nil {
-		f.IsCompressed = *fo.IsCompressed
-	}
-	if fo.User != nil {
-		f.User = *fo.User
-	}
-	if fo.Group != nil {
-		f.Group = *fo.Group
-	}
-	if fo.Permissions != nil {
-		f.Permissions = *fo.Permissions
-	}
-	if fo.Hash != nil {
-		f.Hash = *fo.Hash
-	}
-	return true
-}
-
 func (f *File) Diffs(a *File) (diffs []string) {
 	if f.Path != a.Path {
 		diffs = append(diffs, fmt.Sprintf("path: %s != %s", f.Path, a.Path))

@@ -28,19 +28,3 @@ func (d *Directory) Validate() error {
 
 	return nil
 }
-
-func (d *Directory) Apply(do DirectoryOverride) bool {
-	if d.Path != do.Path {
-		return false
-	}
-	if do.User != nil {
-		d.User = *do.User
-	}
-	if do.Group != nil {
-		d.Group = *do.Group
-	}
-	if do.Permissions != nil {
-		d.Permissions = *do.Permissions
-	}
-	return true
-}
