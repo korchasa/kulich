@@ -1,4 +1,4 @@
-package state
+package spec
 
 type Application struct {
 	Name          string         `hcl:"name,label"`
@@ -11,4 +11,15 @@ type Application struct {
 	FirewallRules []FirewallRule `hcl:"firewall,block"`
 }
 
-type Applications []Application
+func (a Application) Block() Block {
+	return Block{
+		Name:          a.Name,
+		OsOptions:     a.OsOptions,
+		Users:         a.Users,
+		Packages:      a.Packages,
+		Directories:   a.Directories,
+		Files:         a.Files,
+		Services:      a.Services,
+		FirewallRules: a.FirewallRules,
+	}
+}

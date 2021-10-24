@@ -2,7 +2,7 @@ package posix
 
 import (
 	"fmt"
-	"github.com/korchasa/kulich/pkg/state"
+	"github.com/korchasa/kulich/pkg/spec"
 	"os"
 )
 
@@ -11,7 +11,7 @@ type Posix struct {
 	tempDir string
 }
 
-func (fs *Posix) Config(dryRun bool, opts ...*state.OsOption) error {
+func (fs *Posix) Config(dryRun bool, opts ...*spec.OsOption) error {
 	fs.dryRun = dryRun
 	for _, v := range opts {
 		switch v.Name {

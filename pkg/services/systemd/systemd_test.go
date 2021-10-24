@@ -2,7 +2,7 @@ package systemd_test
 
 import (
 	"github.com/korchasa/kulich/pkg/services/systemd"
-	"github.com/korchasa/kulich/pkg/state"
+	"github.com/korchasa/kulich/pkg/spec"
 	"github.com/korchasa/kulich/pkg/sysshell"
 	"github.com/stretchr/testify/assert"
 	"testing"
@@ -22,9 +22,8 @@ func TestSystemd_Add_NotExists(t *testing.T) {
 			"SubState=dead",
 		}, nil)
 
-	err := sys.Add(&state.Service{
-		Name:            service,
-		RestartOnChange: nil,
+	err := sys.Add(&spec.Service{
+		Name: service,
 	})
 	assert.Error(t, err, "service `example` doesn't exists")
 }
@@ -50,9 +49,8 @@ func TestSystemd_Add(t *testing.T) {
 
 	sys := new(systemd.Systemd)
 	assert.NoError(t, sys.Config(false, sh))
-	err := sys.Add(&state.Service{
-		Name:            service,
-		RestartOnChange: nil,
+	err := sys.Add(&spec.Service{
+		Name: service,
 	})
 	assert.NoError(t, err)
 
@@ -80,10 +78,9 @@ func TestSystemd_Add_DisableService(t *testing.T) {
 
 	sys := new(systemd.Systemd)
 	assert.NoError(t, sys.Config(false, sh))
-	err := sys.Add(&state.Service{
-		Name:            service,
-		Disabled:        true,
-		RestartOnChange: nil,
+	err := sys.Add(&spec.Service{
+		Name:     service,
+		Disabled: true,
 	})
 
 	sh.AssertExpectationsInOrder(t)
@@ -112,9 +109,8 @@ func TestSystemd_Remove(t *testing.T) {
 
 	sys := new(systemd.Systemd)
 	assert.NoError(t, sys.Config(false, sh))
-	err := sys.Remove(&state.Service{
-		Name:            service,
-		RestartOnChange: nil,
+	err := sys.Remove(&spec.Service{
+		Name: service,
 	})
 
 	sh.AssertExpectationsInOrder(t)

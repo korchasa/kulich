@@ -4,7 +4,7 @@ import (
 	"crypto/md5"
 	"encoding/hex"
 	"fmt"
-	"github.com/korchasa/kulich/pkg/state"
+	"github.com/korchasa/kulich/pkg/spec"
 	"github.com/korchasa/kulich/pkg/sysshell"
 	"net"
 	"strconv"
@@ -16,7 +16,7 @@ type Iptables struct {
 	dryRun bool
 }
 
-func (i *Iptables) Config(dryRun bool, sh sysshell.Sysshell, opts ...*state.OsOption) error {
+func (i *Iptables) Config(dryRun bool, sh sysshell.Sysshell, opts ...*spec.OsOption) error {
 	i.sh = sh
 	i.dryRun = dryRun
 	for _, v := range opts {
@@ -41,18 +41,18 @@ func (i *Iptables) AfterRun() error {
 	return nil
 }
 
-func (i *Iptables) Add(r *state.FirewallRule) error {
+func (i *Iptables) Add(r *spec.FirewallRule) error {
 	return i.cmd(r, "append")
 }
 
-func (i *Iptables) Remove(r *state.FirewallRule) error {
+func (i *Iptables) Remove(r *spec.FirewallRule) error {
 	return i.cmd(r, "delete")
 }
 
-func (i *Iptables) cmd(r *state.FirewallRule, cmd string) error {
+func (i *Iptables) cmd(r *spec.FirewallRule, cmd string) error {
 	protocol := r.Protocol
 	if protocol == "" {
-		protocol = state.DefaultProtocol
+		protocol = spec.DefaultProtocol
 	}
 
 	for _, port := range r.Ports {
@@ -140,11 +140,11 @@ func validPort(port string) bool {
 	return true
 }
 
-func identifier(r *state.FirewallRule, target, port string) string {
+func identifier(r *spec.FirewallRule, target, port string) string {
 	hash := md5.Sum(
 		[]byte(fmt.Sprintf(
 			"%s-%s-%v-%s-%s",
-			r.Identifier,
+			r.Id,
 			r.Protocol,
 			r.IsOutput,
 			target,

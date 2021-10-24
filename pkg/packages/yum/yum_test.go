@@ -2,7 +2,7 @@ package yum_test
 
 import (
 	"github.com/korchasa/kulich/pkg/packages/yum"
-	"github.com/korchasa/kulich/pkg/state"
+	"github.com/korchasa/kulich/pkg/spec"
 	"github.com/korchasa/kulich/pkg/sysshell"
 	"github.com/stretchr/testify/assert"
 	"os/exec"
@@ -27,7 +27,7 @@ func TestSystemd_Add_Install(t *testing.T) {
 		}).
 		Return(&sysshell.Result{Exit: 0}, nil)
 
-	err := ym.Add(&state.Package{Name: "example"})
+	err := ym.Add(&spec.Package{Name: "example"})
 	assert.NoError(t, err)
 	sh.AssertExpectationsInOrder(t)
 }
@@ -44,7 +44,7 @@ func TestSystemd_Add_AlreadyInstalled(t *testing.T) {
 		}).
 		Return(&sysshell.Result{Exit: 0}, nil)
 
-	err := ym.Add(&state.Package{Name: "example"})
+	err := ym.Add(&spec.Package{Name: "example"})
 	assert.NoError(t, err)
 	sh.AssertExpectationsInOrder(t)
 }
@@ -67,7 +67,7 @@ func TestSystemd_Remove(t *testing.T) {
 		}).
 		Return(&sysshell.Result{Exit: 0}, nil)
 
-	err := ym.Remove(&state.Package{Name: "example"})
+	err := ym.Remove(&spec.Package{Name: "example"})
 	assert.NoError(t, err)
 	sh.AssertExpectationsInOrder(t)
 }

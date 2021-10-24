@@ -1,4 +1,4 @@
-package state
+package spec
 
 type Config struct {
 	OsDriver         DriverConfig `hcl:"os,block"`

@@ -1,16 +1,16 @@
 package packages
 
 import (
-	"github.com/korchasa/kulich/pkg/state"
+	"github.com/korchasa/kulich/pkg/spec"
 	"github.com/korchasa/kulich/pkg/sysshell"
 )
 
 type Packages interface {
-	Config(dryRun bool, sh sysshell.Sysshell, opts ...*state.OsOption) error
+	Config(dryRun bool, sh sysshell.Sysshell, opts ...*spec.OsOption) error
 	FirstRun() error
 	BeforeRun() error
-	Add(p *state.Package) error
-	Remove(p *state.Package) error
+	Add(p *spec.Package) error
+	Remove(p *spec.Package) error
 	AfterRun() error
 }
 

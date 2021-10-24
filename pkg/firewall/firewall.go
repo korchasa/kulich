@@ -1,16 +1,16 @@
 package firewall
 
 import (
-	"github.com/korchasa/kulich/pkg/state"
+	"github.com/korchasa/kulich/pkg/spec"
 	"github.com/korchasa/kulich/pkg/sysshell"
 )
 
 type Firewall interface {
-	Config(dryRun bool, sh sysshell.Sysshell, opts ...*state.OsOption) error
+	Config(dryRun bool, sh sysshell.Sysshell, opts ...*spec.OsOption) error
 	FirstRun() error
 	BeforeRun() error
-	Add(r *state.FirewallRule) error
-	Remove(r *state.FirewallRule) error
+	Add(r *spec.FirewallRule) error
+	Remove(r *spec.FirewallRule) error
 	AfterRun() error
 }
 

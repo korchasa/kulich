@@ -5,17 +5,17 @@ import (
 	"github.com/korchasa/kulich/pkg/firewall"
 	"github.com/korchasa/kulich/pkg/packages"
 	"github.com/korchasa/kulich/pkg/services"
-	"github.com/korchasa/kulich/pkg/state"
+	"github.com/korchasa/kulich/pkg/spec"
 	"github.com/korchasa/kulich/pkg/sysshell"
 )
 
 type Os interface {
-	Config(dryRun bool, sh sysshell.Sysshell, opts ...*state.OsOption) error
+	Config(dryRun bool, sh sysshell.Sysshell, opts ...*spec.OsOption) error
 	FirstRun() error
 	BeforeAll() error
-	AddUser(u *state.User) error
-	RemoveUser(u *state.User) error
-	SetOption(opt *state.OsOption) error
+	AddUser(u *spec.User) error
+	RemoveUser(u *spec.User) error
+	SetOption(opt *spec.OsOption) error
 	BeforePackages(p *packages.Packages) error
 	AfterPackages(p *packages.Packages) error
 	BeforeFilesystem(f *filesystem.Filesystem) error

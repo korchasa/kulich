@@ -1,4 +1,4 @@
-package state_test
+package spec_test
 
 import "testing"
 

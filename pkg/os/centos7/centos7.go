@@ -6,7 +6,7 @@ import (
 	"github.com/korchasa/kulich/pkg/firewall"
 	"github.com/korchasa/kulich/pkg/packages"
 	"github.com/korchasa/kulich/pkg/services"
-	"github.com/korchasa/kulich/pkg/state"
+	"github.com/korchasa/kulich/pkg/spec"
 	"github.com/korchasa/kulich/pkg/sysshell"
 	"os/exec"
 	"strings"
@@ -17,7 +17,7 @@ type Centos7 struct {
 	sh     sysshell.Sysshell
 }
 
-func (c *Centos7) Config(dryRun bool, sh sysshell.Sysshell, opts ...*state.OsOption) error {
+func (c *Centos7) Config(dryRun bool, sh sysshell.Sysshell, opts ...*spec.OsOption) error {
 	c.sh = sh
 	c.dryRun = dryRun
 	for _, v := range opts {
@@ -38,7 +38,7 @@ func (c *Centos7) BeforeAll() error {
 	return nil
 }
 
-func (c *Centos7) AddUser(u *state.User) error {
+func (c *Centos7) AddUser(u *spec.User) error {
 	res, err := c.sh.Exec(exec.Command("id", "-u", u.Name))
 	if err != nil {
 		return fmt.Errorf("can't check `%s` user exists: %w", u.Name, err)
@@ -61,7 +61,7 @@ func (c *Centos7) AddUser(u *state.User) error {
 	return nil
 }
 
-func (c *Centos7) RemoveUser(u *state.User) error {
+func (c *Centos7) RemoveUser(u *spec.User) error {
 	res, err := c.sh.Exec(exec.Command("id", "-u", u.Name))
 	if err != nil {
 		return fmt.Errorf("can't check `%s` user exists: %w", u.Name, err)
@@ -76,7 +76,7 @@ func (c *Centos7) RemoveUser(u *state.User) error {
 	return nil
 }
 
-func (c *Centos7) SetOption(_ *state.OsOption) error {
+func (c *Centos7) SetOption(_ *spec.OsOption) error {
 	panic("implement me")
 }
 

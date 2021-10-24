@@ -2,7 +2,7 @@ package systemd
 
 import (
 	"fmt"
-	"github.com/korchasa/kulich/pkg/state"
+	"github.com/korchasa/kulich/pkg/spec"
 	"github.com/korchasa/kulich/pkg/sysshell"
 	"strings"
 )
@@ -28,7 +28,7 @@ type Systemd struct {
 	sh     sysshell.Sysshell
 }
 
-func (sys *Systemd) Config(dryRun bool, sh sysshell.Sysshell, opts ...*state.OsOption) error {
+func (sys *Systemd) Config(dryRun bool, sh sysshell.Sysshell, opts ...*spec.OsOption) error {
 	sys.sh = sh
 	sys.dryRun = dryRun
 	for _, v := range opts {
@@ -53,10 +53,10 @@ func (sys *Systemd) AfterRun() error {
 	return nil
 }
 
-func (sys *Systemd) Add(s *state.Service) error {
+func (sys *Systemd) Add(s *spec.Service) error {
 	loadState, unitState, activeState, subState, err := sys.serviceState(s.Name)
 	if err != nil {
-		return fmt.Errorf("can't get service `%s` state: %w", s.Name, err)
+		return fmt.Errorf("can't get service `%s` spec: %w", s.Name, err)
 	}
 	if loadState == notFound {
 		return fmt.Errorf("service `%s` doesn't exists", s.Name)
@@ -94,10 +94,10 @@ func (sys *Systemd) Add(s *state.Service) error {
 	}
 }
 
-func (sys *Systemd) Remove(s *state.Service) error {
+func (sys *Systemd) Remove(s *spec.Service) error {
 	loadState, unitState, activeState, _, err := sys.serviceState(s.Name)
 	if err != nil {
-		return fmt.Errorf("can't get service `%s` state: %w", s.Name, err)
+		return fmt.Errorf("can't get service `%s` spec: %w", s.Name, err)
 	}
 	if loadState == notFound {
 		return fmt.Errorf("service `%s` doesn't exists", s.Name)

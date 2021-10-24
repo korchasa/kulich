@@ -3,7 +3,7 @@ package posix_test
 import (
 	"fmt"
 	"github.com/korchasa/kulich/pkg/filesystem/posix"
-	"github.com/korchasa/kulich/pkg/state"
+	"github.com/korchasa/kulich/pkg/spec"
 	"github.com/stretchr/testify/assert"
 	"os"
 	"time"
@@ -15,7 +15,7 @@ func (suite *FsIntegrationTestSuite) TestCreateFile_FromLocalFile() {
 	expectedContent := []byte("hello")
 	expectedHash := "2cf24dba5fb0a30e26e83b2ac5b9e29e1b161e5c1fa7425e73043362938b9824"
 	dst := t.TempDir() + "/dst"
-	f := &state.File{
+	f := &spec.File{
 		Path:        dst,
 		From:        src,
 		User:        "nobody",
@@ -46,7 +46,7 @@ func (suite *FsIntegrationTestSuite) TestCreateFile_ReplaceOldFile() {
 	oldContent := []byte("nothing")
 	expectedContent := []byte("hello")
 	expectedHash := "2cf24dba5fb0a30e26e83b2ac5b9e29e1b161e5c1fa7425e73043362938b9824"
-	f := &state.File{
+	f := &spec.File{
 		Path:        dst,
 		From:        src,
 		User:        "nobody",
@@ -81,7 +81,7 @@ func (suite *FsIntegrationTestSuite) TestCreateFile_SuchFileExists() {
 	src, dst := fmt.Sprintf("%s/src", t.TempDir()), fmt.Sprintf("%s/dst", t.TempDir())
 	expectedContent, expectedHash := []byte("hello"), "2cf24dba5fb0a30e26e83b2ac5b9e29e1b161e5c1fa7425e73043362938b9824"
 	nobodyUid, nobodyGid := 99, 99
-	f := &state.File{
+	f := &spec.File{
 		Path:        dst,
 		From:        src,
 		User:        "nobody",
@@ -117,7 +117,7 @@ func (suite *FsIntegrationTestSuite) TestCreateFile_FromUri() {
 	src := "https://github.com/hashicorp/levant/archive/refs/tags/v0.3.0.zip"
 	expectedHash := "9d4489776118489c010b49e8001fa93eb94842f99f51f488b44c361a7b007d99"
 	dst := t.TempDir() + "/test_from_uri.zip"
-	f := &state.File{
+	f := &spec.File{
 		Path:        dst,
 		From:        src,
 		User:        "nobody",
@@ -145,7 +145,7 @@ func (suite *FsIntegrationTestSuite) TestCreateFile_FromTemplate() {
 	dst := t.TempDir() + "/TestLocalTemplate_dst.txt"
 	expectedContent := []byte("hello world with sprig")
 	expectedHash := "95a7dff39a9691b61784936f7885610748ede5675fa35f4e2c1487a725108261"
-	f := &state.File{
+	f := &spec.File{
 		Path:        dst,
 		From:        src,
 		User:        "nobody",

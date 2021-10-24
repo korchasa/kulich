@@ -1,4 +1,4 @@
-state "nomad-clients" {
+spec "nomad-clients" {
   config {
     packages "yum" {}
     services "systemctl" {}

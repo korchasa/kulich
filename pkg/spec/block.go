@@ -1,22 +1,23 @@
-package state
+package spec
 
 import (
 	"fmt"
 	"github.com/korchasa/kulich/pkg/diff"
 )
 
-type System struct {
-	OsOptions     []OsOption     `hcl:"os_option,block"`
-	Users         []User         `hcl:"user,block"`
-	Packages      []Package      `hcl:"package,block"`
-	Directories   []Directory    `hcl:"directory,block"`
-	Files         []File         `hcl:"file,block"`
-	Services      []Service      `hcl:"service,block"`
-	FirewallRules []FirewallRule `hcl:"firewall,block"`
+type Block struct {
+	Name          string
+	OsOptions     []OsOption
+	Users         []User
+	Packages      []Package
+	Directories   []Directory
+	Files         []File
+	Services      []Service
+	FirewallRules []FirewallRule
 }
 
-func (s System) Diff(to System) (bd BlockDiff, err error) {
-	bd.Name = "system"
+func (s Block) Diff(to Block) (bd BlockDiff, err error) {
+	bd.Name = s.Name
 
 	changed, removed, err := diff.Diff(s.OsOptions, to.OsOptions)
 	if err != nil {

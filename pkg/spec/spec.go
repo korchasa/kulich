@@ -1,13 +1,13 @@
-package state
+package spec
 
-type State struct {
+type Spec struct {
 	Name         string        `hcl:"name,label"`
 	Config       Config        `hcl:"config,block"`
 	System       System        `hcl:"system,block"`
 	Applications []Application `hcl:"application,block"`
 }
 
-func (s State) Diff(_ *State) *Diff {
+func (s Spec) Diff(_ *Spec) *Diff {
 	//return &Diff{
 	//	System: s.System.Diff(to.System),
 	//	Applications: func() []BlockDiff {

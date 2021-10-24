@@ -1,44 +1,44 @@
-package state_test
+package spec_test
 
 import (
-	"github.com/korchasa/kulich/pkg/state"
+	"github.com/korchasa/kulich/pkg/spec"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
 
 func TestSystem_Diff(t *testing.T) {
-	from := state.System{
-		OsOptions: []state.OsOption{
+	from := spec.System{
+		OsOptions: []spec.OsOption{
 			{Type: "t1", Name: "n1", Value: "v1"},
 			{Type: "t2", Name: "n2", Value: "v2"},
 			{Type: "t3", Name: "n3", Value: "v3"},
 		},
-		Users: []state.User{
+		Users: []spec.User{
 			{Name: "n1", System: false},
 			{Name: "n2", System: false},
 			{Name: "n3", System: false},
 		},
-		Packages: []state.Package{
+		Packages: []spec.Package{
 			{Name: "n1", Removed: false},
 			{Name: "n2", Removed: false},
 			{Name: "n3", Removed: false},
 		},
-		Directories: []state.Directory{
+		Directories: []spec.Directory{
 			{Path: "p1", User: "u1", Group: "g1", Permissions: 601},
 			{Path: "p2", User: "u2", Group: "g2", Permissions: 602},
 			{Path: "p3", User: "u3", Group: "g3", Permissions: 603},
 		},
-		Files: []state.File{
+		Files: []spec.File{
 			{Path: "p1", From: "f1", User: "u1", Group: "g1", Permissions: 601},
 			{Path: "p2", From: "f2", User: "u2", Group: "g2", Permissions: 602},
 			{Path: "p3", From: "f3", User: "u3", Group: "g3", Permissions: 603},
 		},
-		Services: []state.Service{
+		Services: []spec.Service{
 			{Name: "n1", Disabled: false},
 			{Name: "n2", Disabled: false},
 			{Name: "n3", Disabled: false},
 		},
-		FirewallRules: []state.FirewallRule{
+		FirewallRules: []spec.FirewallRule{
 			{
 				Name:     "n1",
 				Id:       "i1",
@@ -65,38 +65,38 @@ func TestSystem_Diff(t *testing.T) {
 			},
 		},
 	}
-	to := state.System{
-		OsOptions: []state.OsOption{
+	to := spec.System{
+		OsOptions: []spec.OsOption{
 			{Type: "t1", Name: "n1", Value: "v1"},
 			{Type: "t2", Name: "n2", Value: "v22"},
 			{Type: "t4", Name: "n4", Value: "v4"},
 		},
-		Users: []state.User{
+		Users: []spec.User{
 			{Name: "n1", System: false},
 			{Name: "n2", System: true},
 			{Name: "n4", System: false},
 		},
-		Packages: []state.Package{
+		Packages: []spec.Package{
 			{Name: "n1", Removed: false},
 			{Name: "n2", Removed: true},
 			{Name: "n4", Removed: false},
 		},
-		Directories: []state.Directory{
+		Directories: []spec.Directory{
 			{Path: "p1", User: "u1", Group: "g1", Permissions: 601},
 			{Path: "p2", User: "u2", Group: "g2", Permissions: 666},
 			{Path: "p4", User: "u4", Group: "g4", Permissions: 604},
 		},
-		Files: []state.File{
+		Files: []spec.File{
 			{Path: "p1", From: "f1", User: "u1", Group: "g1", Permissions: 601},
 			{Path: "p2", From: "f2", User: "u2", Group: "g2", Permissions: 602, Hash: "h2"},
 			{Path: "p4", From: "f4", User: "u4", Group: "g4", Permissions: 604},
 		},
-		Services: []state.Service{
+		Services: []spec.Service{
 			{Name: "n1", Disabled: false},
 			{Name: "n2", Disabled: true},
 			{Name: "n4", Disabled: true},
 		},
-		FirewallRules: []state.FirewallRule{
+		FirewallRules: []spec.FirewallRule{
 			{
 				Name:     "n1",
 				Id:       "i1",
@@ -124,64 +124,64 @@ func TestSystem_Diff(t *testing.T) {
 		},
 	}
 
-	diff, err := from.Diff(to)
+	diff, err := from.Block().Diff(to.Block())
 	assert.NoError(t, err)
-	assert.Equal(t, state.OsOptionsDiff{
-		Changed: []state.OsOption{
+	assert.Equal(t, spec.OsOptionsDiff{
+		Changed: []spec.OsOption{
 			{Type: "t2", Name: "n2", Value: "v22"},
 			{Type: "t4", Name: "n4", Value: "v4"},
 		},
-		Removed: []state.OsOption{
+		Removed: []spec.OsOption{
 			{Type: "t3", Name: "n3", Value: "v3"},
 		},
 	}, diff.OsOptions)
-	assert.Equal(t, state.UsersDiff{
-		Changed: []state.User{
+	assert.Equal(t, spec.UsersDiff{
+		Changed: []spec.User{
 			{Name: "n2", System: true},
 			{Name: "n4", System: false},
 		},
-		Removed: []state.User{
+		Removed: []spec.User{
 			{Name: "n3", System: false},
 		},
 	}, diff.Users)
-	assert.Equal(t, state.PackagesDiff{
-		Changed: []state.Package{
+	assert.Equal(t, spec.PackagesDiff{
+		Changed: []spec.Package{
 			{Name: "n2", Removed: true},
 			{Name: "n4", Removed: false},
 		},
-		Removed: []state.Package{
+		Removed: []spec.Package{
 			{Name: "n3", Removed: false},
 		},
 	}, diff.Packages)
-	assert.Equal(t, state.DirectoriesDiff{
-		Changed: []state.Directory{
+	assert.Equal(t, spec.DirectoriesDiff{
+		Changed: []spec.Directory{
 			{Path: "p2", User: "u2", Group: "g2", Permissions: 666},
 			{Path: "p4", User: "u4", Group: "g4", Permissions: 604},
 		},
-		Removed: []state.Directory{
+		Removed: []spec.Directory{
 			{Path: "p3", User: "u3", Group: "g3", Permissions: 603},
 		},
 	}, diff.Directories)
-	assert.Equal(t, state.FilesDiff{
-		Changed: []state.File{
+	assert.Equal(t, spec.FilesDiff{
+		Changed: []spec.File{
 			{Path: "p2", From: "f2", User: "u2", Group: "g2", Permissions: 602, Hash: "h2"},
 			{Path: "p4", From: "f4", User: "u4", Group: "g4", Permissions: 604},
 		},
-		Removed: []state.File{
+		Removed: []spec.File{
 			{Path: "p3", From: "f3", User: "u3", Group: "g3", Permissions: 603},
 		},
 	}, diff.Files)
-	assert.Equal(t, state.ServicesDiff{
-		Changed: []state.Service{
+	assert.Equal(t, spec.ServicesDiff{
+		Changed: []spec.Service{
 			{Name: "n2", Disabled: true},
 			{Name: "n4", Disabled: true},
 		},
-		Removed: []state.Service{
+		Removed: []spec.Service{
 			{Name: "n3", Disabled: false},
 		},
 	}, diff.Services)
-	assert.Equal(t, state.FirewallRulesDiff{
-		Changed: []state.FirewallRule{
+	assert.Equal(t, spec.FirewallRulesDiff{
+		Changed: []spec.FirewallRule{
 			{
 				Name:     "n2",
 				Id:       "i2",
@@ -199,7 +199,7 @@ func TestSystem_Diff(t *testing.T) {
 				IsOutput: true,
 			},
 		},
-		Removed: []state.FirewallRule{
+		Removed: []spec.FirewallRule{
 			{
 				Name:     "n3",
 				Id:       "i3",

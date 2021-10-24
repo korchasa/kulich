@@ -1,16 +1,16 @@
 package services
 
 import (
-	"github.com/korchasa/kulich/pkg/state"
+	"github.com/korchasa/kulich/pkg/spec"
 	"github.com/korchasa/kulich/pkg/sysshell"
 )
 
 type Services interface {
-	Config(dryRun bool, sh sysshell.Sysshell, opts ...*state.OsOption) error
+	Config(dryRun bool, sh sysshell.Sysshell, opts ...*spec.OsOption) error
 	FirstRun() error
 	BeforeRun() error
-	Add(s *state.Service) error
-	Remove(s *state.Service) error
+	Add(s *spec.Service) error
+	Remove(s *spec.Service) error
 	AfterRun() error
 }
 

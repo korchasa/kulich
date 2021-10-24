@@ -3,7 +3,7 @@ package yum
 import (
 	"context"
 	"fmt"
-	"github.com/korchasa/kulich/pkg/state"
+	"github.com/korchasa/kulich/pkg/spec"
 	"os/exec"
 	"time"
 
@@ -16,7 +16,7 @@ type Yum struct {
 	dryRun bool
 }
 
-func (y *Yum) Config(dryRun bool, sh sysshell.Sysshell, opts ...*state.OsOption) error {
+func (y *Yum) Config(dryRun bool, sh sysshell.Sysshell, opts ...*spec.OsOption) error {
 	y.sh = sh
 	y.dryRun = dryRun
 	for _, v := range opts {
@@ -52,7 +52,7 @@ func (y *Yum) AfterRun() error {
 	return nil
 }
 
-func (y *Yum) Add(p *state.Package) error {
+func (y *Yum) Add(p *spec.Package) error {
 	log.Infof("Install package `%s`", p.Name)
 	if y.dryRun {
 		return nil
@@ -80,7 +80,7 @@ func (y *Yum) Add(p *state.Package) error {
 	return nil
 }
 
-func (y *Yum) Remove(p *state.Package) error {
+func (y *Yum) Remove(p *spec.Package) error {
 	log.Infof("Removed package `%s`", p.Name)
 	if y.dryRun {
 		return nil
