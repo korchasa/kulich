@@ -2,7 +2,8 @@ package spec
 
 import (
 	"fmt"
-	"github.com/korchasa/kulich/pkg/diff"
+	"github.com/korchasa/kulich/pkg/slice_diff"
+	"strings"
 )
 
 type Block struct {
@@ -16,12 +17,42 @@ type Block struct {
 	FirewallRules []FirewallRule
 }
 
-func (s Block) Diff(to Block) (bd BlockDiff, err error) {
-	bd.Name = s.Name
+func (b Block) Identifier() string {
+	return b.Name
+}
 
-	changed, removed, err := diff.Diff(s.OsOptions, to.OsOptions)
+func (b Block) EqualityHash() string {
+	parts := []string{b.Name}
+	for _, o := range b.OsOptions {
+		parts = append(parts, o.EqualityHash())
+	}
+	for _, u := range b.Users {
+		parts = append(parts, u.EqualityHash())
+	}
+	for _, p := range b.Packages {
+		parts = append(parts, p.EqualityHash())
+	}
+	for _, d := range b.Directories {
+		parts = append(parts, d.EqualityHash())
+	}
+	for _, f := range b.Files {
+		parts = append(parts, f.EqualityHash())
+	}
+	for _, s := range b.Services {
+		parts = append(parts, s.EqualityHash())
+	}
+	for _, fr := range b.FirewallRules {
+		parts = append(parts, fr.EqualityHash())
+	}
+	return strings.Join(parts, "|")
+}
+
+func (b Block) Diff(to Block) (bd BlockDiff, err error) {
+	bd.Name = to.Name
+
+	changed, removed, err := slice_diff.SliceDiff(b.OsOptions, to.OsOptions)
 	if err != nil {
-		return bd, fmt.Errorf("can't build diff for os options: %w", err)
+		return bd, fmt.Errorf("can't build slice_diff for os options: %w", err)
 	}
 	for _, v := range changed {
 		bd.OsOptions.Changed = append(bd.OsOptions.Changed, v.(OsOption))
@@ -30,9 +61,9 @@ func (s Block) Diff(to Block) (bd BlockDiff, err error) {
 		bd.OsOptions.Removed = append(bd.OsOptions.Removed, v.(OsOption))
 	}
 
-	changed, removed, err = diff.Diff(s.Users, to.Users)
+	changed, removed, err = slice_diff.SliceDiff(b.Users, to.Users)
 	if err != nil {
-		return bd, fmt.Errorf("can't build diff for users: %w", err)
+		return bd, fmt.Errorf("can't build slice_diff for users: %w", err)
 	}
 	for _, v := range changed {
 		bd.Users.Changed = append(bd.Users.Changed, v.(User))
@@ -41,9 +72,9 @@ func (s Block) Diff(to Block) (bd BlockDiff, err error) {
 		bd.Users.Removed = append(bd.Users.Removed, v.(User))
 	}
 
-	changed, removed, err = diff.Diff(s.Packages, to.Packages)
+	changed, removed, err = slice_diff.SliceDiff(b.Packages, to.Packages)
 	if err != nil {
-		return bd, fmt.Errorf("can't build diff for packages: %w", err)
+		return bd, fmt.Errorf("can't build slice_diff for packages: %w", err)
 	}
 	for _, v := range changed {
 		bd.Packages.Changed = append(bd.Packages.Changed, v.(Package))
@@ -52,9 +83,9 @@ func (s Block) Diff(to Block) (bd BlockDiff, err error) {
 		bd.Packages.Removed = append(bd.Packages.Removed, v.(Package))
 	}
 
-	changed, removed, err = diff.Diff(s.Directories, to.Directories)
+	changed, removed, err = slice_diff.SliceDiff(b.Directories, to.Directories)
 	if err != nil {
-		return bd, fmt.Errorf("can't build diff for directories: %w", err)
+		return bd, fmt.Errorf("can't build slice_diff for directories: %w", err)
 	}
 	for _, v := range changed {
 		bd.Directories.Changed = append(bd.Directories.Changed, v.(Directory))
@@ -63,9 +94,9 @@ func (s Block) Diff(to Block) (bd BlockDiff, err error) {
 		bd.Directories.Removed = append(bd.Directories.Removed, v.(Directory))
 	}
 
-	changed, removed, err = diff.Diff(s.Files, to.Files)
+	changed, removed, err = slice_diff.SliceDiff(b.Files, to.Files)
 	if err != nil {
-		return bd, fmt.Errorf("can't build diff for files: %w", err)
+		return bd, fmt.Errorf("can't build slice_diff for files: %w", err)
 	}
 	for _, v := range changed {
 		bd.Files.Changed = append(bd.Files.Changed, v.(File))
@@ -74,9 +105,9 @@ func (s Block) Diff(to Block) (bd BlockDiff, err error) {
 		bd.Files.Removed = append(bd.Files.Removed, v.(File))
 	}
 
-	changed, removed, err = diff.Diff(s.Services, to.Services)
+	changed, removed, err = slice_diff.SliceDiff(b.Services, to.Services)
 	if err != nil {
-		return bd, fmt.Errorf("can't build diff for services: %w", err)
+		return bd, fmt.Errorf("can't build slice_diff for services: %w", err)
 	}
 	for _, v := range changed {
 		bd.Services.Changed = append(bd.Services.Changed, v.(Service))
@@ -85,9 +116,9 @@ func (s Block) Diff(to Block) (bd BlockDiff, err error) {
 		bd.Services.Removed = append(bd.Services.Removed, v.(Service))
 	}
 
-	changed, removed, err = diff.Diff(s.FirewallRules, to.FirewallRules)
+	changed, removed, err = slice_diff.SliceDiff(b.FirewallRules, to.FirewallRules)
 	if err != nil {
-		return bd, fmt.Errorf("can't build diff for firewall rules: %w", err)
+		return bd, fmt.Errorf("can't build slice_diff for firewall rules: %w", err)
 	}
 	for _, v := range changed {
 		bd.FirewallRules.Changed = append(bd.FirewallRules.Changed, v.(FirewallRule))
@@ -97,4 +128,20 @@ func (s Block) Diff(to Block) (bd BlockDiff, err error) {
 	}
 
 	return bd, nil
+}
+
+type BlocksDiff struct {
+	Changed []BlockDiff
+	Removed []Block
+}
+
+type BlockDiff struct {
+	Name          string
+	OsOptions     OsOptionsDiff
+	Users         UsersDiff
+	Packages      PackagesDiff
+	Directories   DirectoriesDiff
+	Files         FilesDiff
+	Services      ServicesDiff
+	FirewallRules FirewallRulesDiff
 }

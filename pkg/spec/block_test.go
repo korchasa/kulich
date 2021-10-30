@@ -6,8 +6,8 @@ import (
 	"testing"
 )
 
-func TestSystem_Diff(t *testing.T) {
-	from := spec.System{
+func TestBlock_Diff(t *testing.T) {
+	from := spec.Block{
 		OsOptions: []spec.OsOption{
 			{Type: "t1", Name: "n1", Value: "v1"},
 			{Type: "t2", Name: "n2", Value: "v2"},
@@ -65,7 +65,7 @@ func TestSystem_Diff(t *testing.T) {
 			},
 		},
 	}
-	to := spec.System{
+	to := spec.Block{
 		OsOptions: []spec.OsOption{
 			{Type: "t1", Name: "n1", Value: "v1"},
 			{Type: "t2", Name: "n2", Value: "v22"},
@@ -124,7 +124,7 @@ func TestSystem_Diff(t *testing.T) {
 		},
 	}
 
-	diff, err := from.Block().Diff(to.Block())
+	diff, err := from.Diff(to)
 	assert.NoError(t, err)
 	assert.Equal(t, spec.OsOptionsDiff{
 		Changed: []spec.OsOption{

@@ -3,8 +3,8 @@ package spec
 import "fmt"
 
 type Service struct {
-	Name     string `hcl:"name,label"`
-	Disabled bool   `hcl:"disabled,optional"`
+	Name     string
+	Disabled bool
 }
 
 func (s Service) Identifier() string {

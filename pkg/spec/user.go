@@ -3,8 +3,8 @@ package spec
 import "fmt"
 
 type User struct {
-	Name   string `hcl:"name,label"`
-	System bool   `hcl:"system,optional"`
+	Name   string
+	System bool
 }
 
 func (u User) Identifier() string {

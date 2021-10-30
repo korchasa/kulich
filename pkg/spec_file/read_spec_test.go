@@ -1,36 +1,36 @@
-package spec_test
+package spec_file_test
 
 import (
-	"github.com/korchasa/kulich/pkg/spec"
+	"github.com/korchasa/kulich/pkg/spec_file"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
 
-func TestReadServerState(t *testing.T) {
-	st, err := spec.ReadServerState("./fixtures/full.hcl")
+func TestReadSpec(t *testing.T) {
+	st, err := spec_file.ReadSpec("./fixtures/full.hcl")
 	assert.NoError(t, err)
 	assert.Equal(
 		t,
-		spec.Root{
-			Spec: spec.Spec{
+		spec_file.Root{
+			Spec: spec_file.Spec{
 				Name: "nomad-clients",
-				Config: spec.Config{
-					OsDriver:         spec.DriverConfig{Name: "centos7"},
-					PackagesDriver:   spec.DriverConfig{Name: "yum"},
-					FilesystemDriver: spec.DriverConfig{Name: "posix"},
-					ServicesDriver:   spec.DriverConfig{Name: "systemctl"},
-					FirewallDriver:   spec.DriverConfig{Name: "iptables"},
+				Config: spec_file.Config{
+					OsDriver:         spec_file.DriverConfig{Name: "centos7"},
+					PackagesDriver:   spec_file.DriverConfig{Name: "yum"},
+					FilesystemDriver: spec_file.DriverConfig{Name: "posix"},
+					ServicesDriver:   spec_file.DriverConfig{Name: "systemctl"},
+					FirewallDriver:   spec_file.DriverConfig{Name: "iptables"},
 				},
-				System: spec.System{
-					OsOptions: []spec.OsOption{
+				System: spec_file.System{
+					OsOptions: []spec_file.OsOption{
 						{Type: "hostnamectl", Name: "hostname", Value: "node1-nomad"},
 						{Type: "selinux", Name: "enabled", Value: "false"},
 					},
-					Users: []spec.User{{
+					Users: []spec_file.User{{
 						Name:   "alice",
 						System: false,
 					}},
-					Packages: []spec.Package{
+					Packages: []spec_file.Package{
 						{Name: "epel-release", Removed: false},
 						{Name: "yum-utils", Removed: false},
 						{Name: "unzip", Removed: false},
@@ -38,7 +38,7 @@ func TestReadServerState(t *testing.T) {
 						{Name: "noderig", Removed: true},
 						{Name: "firewalld", Removed: true},
 					},
-					Files: []spec.File{
+					Files: []spec_file.File{
 						{
 							Path:        "/home/korchasa/.ssh/authorized_keys",
 							From:        "./korchasa_authorized_keys",
@@ -55,22 +55,22 @@ func TestReadServerState(t *testing.T) {
 						},
 					},
 				},
-				Applications: []spec.Application{
+				Applications: []spec_file.Application{
 					{
 						Name: "consul",
-						OsOptions: []spec.OsOption{{
+						OsOptions: []spec_file.OsOption{{
 							Type:  "env",
 							Name:  "CONSUL_HTTP_ADDR",
 							Value: "http://127.0.0.1:8500",
 						}},
-						Users: []spec.User{{
+						Users: []spec_file.User{{
 							Name:   "consul",
 							System: true,
 						}},
-						Packages: []spec.Package{
+						Packages: []spec_file.Package{
 							{Name: "unbound", Removed: false},
 						},
-						Directories: []spec.Directory{
+						Directories: []spec_file.Directory{
 							{
 								Path:        "/var/consul/",
 								User:        "consul",
@@ -78,7 +78,7 @@ func TestReadServerState(t *testing.T) {
 								Permissions: 700,
 							},
 						},
-						Files: []spec.File{
+						Files: []spec_file.File{
 							{
 								Path:         "/usr/local/bin/consul",
 								From:         "https://releases.hashicorp.com/consul/1.9.5/consul_1.9.5_linux_amd64.zip",
@@ -100,13 +100,13 @@ func TestReadServerState(t *testing.T) {
 								Permissions: 400,
 							},
 						},
-						Services: []spec.Service{
+						Services: []spec_file.Service{
 							{
 								Name:     "consul",
 								Disabled: false,
 							},
 						},
-						FirewallRules: []spec.FirewallRule{
+						FirewallRules: []spec_file.FirewallRule{
 							{
 								Name:  "consul",
 								Ports: []string{"8300:8302", "8500:8502", "8600"},

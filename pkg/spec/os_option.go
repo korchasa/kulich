@@ -5,9 +5,9 @@ import (
 )
 
 type OsOption struct {
-	Type  string `hcl:"type,label"`
-	Name  string `hcl:"name,label"`
-	Value string `hcl:"value"`
+	Type  string
+	Name  string
+	Value string
 }
 
 func (o OsOption) Identifier() string {
@@ -17,8 +17,6 @@ func (o OsOption) Identifier() string {
 func (o OsOption) EqualityHash() string {
 	return fmt.Sprintf("%s|%s", o.Identifier(), o.Value)
 }
-
-type Options []Options
 
 type OsOptionsDiff struct {
 	Changed []OsOption

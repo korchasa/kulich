@@ -1,4 +1,4 @@
-package diff
+package slice_diff
 
 import (
 	"fmt"
@@ -27,7 +27,7 @@ func interfaceSlice(slice interface{}) ([]Comparable, error) {
 	return ret, nil
 }
 
-func Diff(from, to interface{}) (changed, removed []interface{}, err error) {
+func SliceDiff(from, to interface{}) (changed, removed []interface{}, err error) {
 	fromSlice, err := interfaceSlice(from)
 	if err != nil {
 		return nil, nil, fmt.Errorf("can't convert `from` slice: %w", err)

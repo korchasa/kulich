@@ -1,4 +1,4 @@
-package diff
+package slice_diff
 
 type Comparable interface {
 	Identifier() string

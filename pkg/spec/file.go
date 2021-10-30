@@ -7,15 +7,15 @@ import (
 )
 
 type File struct {
-	Path         string            `hcl:"path,label"`
-	From         string            `hcl:"from"`
-	IsTemplate   bool              `hcl:"template,optional"`
-	TemplateVars map[string]string `hcl:"template_vars,optional"`
-	IsCompressed bool              `hcl:"compressed,optional"`
-	User         string            `hcl:"user"`
-	Group        string            `hcl:"group"`
-	Permissions  fs.FileMode       `hcl:"permissions"`
-	Hash         string            `hcl:"hash,optional"`
+	Path         string
+	From         string
+	IsTemplate   bool
+	TemplateVars map[string]string
+	IsCompressed bool
+	User         string
+	Group        string
+	Permissions  fs.FileMode
+	Hash         string
 }
 
 func (f File) Identifier() string {
@@ -44,25 +44,6 @@ func (f *File) Validate() error {
 	}
 
 	return nil
-}
-
-func (f *File) Diffs(a *File) (diffs []string) {
-	if f.Path != a.Path {
-		diffs = append(diffs, fmt.Sprintf("path: %s != %s", f.Path, a.Path))
-	}
-	if f.Permissions != a.Permissions {
-		diffs = append(diffs, fmt.Sprintf("permisssions: %s != %s", f.Permissions, a.Permissions))
-	}
-	if f.User != a.User {
-		diffs = append(diffs, fmt.Sprintf("user: %s != %s", f.User, a.User))
-	}
-	if f.Group != a.Group {
-		diffs = append(diffs, fmt.Sprintf("group: %s != %s", f.Group, a.Group))
-	}
-	if f.Hash != a.Hash {
-		diffs = append(diffs, fmt.Sprintf("content hash: %s != %s", f.Hash, a.Hash))
-	}
-	return diffs
 }
 
 func (f *File) String() string {

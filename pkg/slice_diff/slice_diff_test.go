@@ -1,9 +1,9 @@
-package diff_test
+package slice_diff_test
 
 import (
 	"crypto/sha256"
 	"fmt"
-	"github.com/korchasa/kulich/pkg/diff"
+	"github.com/korchasa/kulich/pkg/slice_diff"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
@@ -38,7 +38,7 @@ func TestDiff(t *testing.T) {
 		{Name: "c", Value: "3"},
 		{Name: "e", Value: "5"},
 	}
-	changed, removed, err := diff.Diff(from, to)
+	changed, removed, err := slice_diff.SliceDiff(from, to)
 	assert.NoError(t, err)
 	assert.Len(t, changed, 2)
 	assert.IsType(t, changed[0], comp{})
