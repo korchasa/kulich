@@ -13,7 +13,7 @@ require (
 	github.com/mitchellh/copystructure v1.2.0 // indirect
 	github.com/sirupsen/logrus v1.8.1
 	github.com/stretchr/testify v1.7.0
-	golang.org/x/crypto v0.1.0 // indirect
+	golang.org/x/crypto v0.17.0 // indirect
 )
 
 replace github.com/stretchr/testify v1.7.0 => github.com/r-insider/testify v1.7.1-0.20210923130853-c00b2e32cacf
