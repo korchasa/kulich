@@ -1,6 +1,9 @@
 # Kulich
 
-Immutable OS provision
+> [!CAUTION]
+> This is Proof of Concept. It is created to test the potential feasibility of developing such a system. It is not suitable for use in production and development may be halted at any time.
+
+Immutable OS provision.
 
 Example:
 
